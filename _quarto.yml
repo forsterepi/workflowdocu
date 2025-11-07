@@ -1,0 +1,31 @@
+project:
+  type: book
+
+book:
+  title: "Workflow Documentation"
+  author: "Felix Forster"
+  date: today
+  chapters:
+    - index.qmd
+    - part: "Pre-data"
+      chapters:
+        - sim.qmd
+    - part: "Data"
+      chapters: 
+        - mi.qmd
+    - part: "Post-data"
+      chapters: 
+        - lca.qmd
+        - hmm.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+editor: visual
+

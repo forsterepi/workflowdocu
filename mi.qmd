@@ -1,0 +1,3 @@
+# Multiple Imputation
+
+For multiple imputation, we use the package `mice` [@mice].

@@ -1,0 +1,5 @@
+# Preface {.unnumbered}
+
+This book describes my workflows.
+
+It is accompanied by the unpublished `supfuns` package.
