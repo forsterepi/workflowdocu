@@ -17,6 +17,9 @@ book:
       chapters: 
         - lca.qmd
         - hmm.qmd
+    - part: "Other"
+      chapters: 
+        - cache.qmd
     - references.qmd
 
 bibliography: references.bib

@@ -10,36 +10,6 @@
     ]
   },
   {
-    "objectID": "intro.html",
-    "href": "intro.html",
-    "title": "1  Introduction",
-    "section": "",
-    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n1 + 1\n\n[1] 2\n\n\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97.",
-    "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
-    ]
-  },
-  {
-    "objectID": "summary.html",
-    "href": "summary.html",
-    "title": "2  Summary",
-    "section": "",
-    "text": "In summary, this book has no content whatsoever.\n\n1 + 1\n\n[1] 2",
-    "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Summary</span>"
-    ]
-  },
-  {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "References",
-    "section": "",
-    "text": "Buuren, Stef van, and Karin Groothuis-Oudshoorn. 2011.\n“Mice: Multivariate Imputation by\nChained Equations in r” 45: 1–67. https://doi.org/10.18637/jss.v045.i03.",
-    "crumbs": [
-      "References"
-    ]
-  },
-  {
     "objectID": "sim.html",
     "href": "sim.html",
     "title": "1  Simulation",
@@ -81,6 +51,82 @@
     "crumbs": [
       "Post-data",
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Hidden Markov Models</span>"
+    ]
+  },
+  {
+    "objectID": "cache.html",
+    "href": "cache.html",
+    "title": "5  Caching",
+    "section": "",
+    "text": "5.1 Setting up the cache\nFirst, we need to initialise the cache. Since we use a rds cache, we need to create a subfolder in our project folder, called “Cache”.\nNext, we need to include code in our initialisation script, i.e., the script that runs at the very beginning and loads packages, sets options, etc.\ncache &lt;- storr::storr_rds(\"Cache\")\nLoading storr with library() is not necessary because this is the only time we call any function that needs storr:: to be specified. From now on, we interact with the R6 object that we called cache, which knows its methods without spcifying storr::. If the cache already exists, the line above “creates the connection”.",
+    "crumbs": [
+      "Other",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Caching</span>"
+    ]
+  },
+  {
+    "objectID": "cache.html#using-the-cache",
+    "href": "cache.html#using-the-cache",
+    "title": "5  Caching",
+    "section": "5.2 Using the cache",
+    "text": "5.2 Using the cache\nThe basic methods of the cache object are:\n\nset for saving objects\nget for loading objects\nexists for checking if an object with the specified name exists\n\nThe basic structure of caching uses an if-else statement to check if the specified object already exists. If yes, the object is loaded from the cache, otherwise the code to create it is evaluated.\n\nif (cache$exists(\"name\")) {\n  object &lt;- cache$get(\"name\")\n} else {\n  object &lt;- some_code()\n  ## more code\n  cache$set(\"name\", object)\n}\n\n(object and name can also be the same.)",
+    "crumbs": [
+      "Other",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Caching</span>"
+    ]
+  },
+  {
+    "objectID": "cache.html#cache-invalidation",
+    "href": "cache.html#cache-invalidation",
+    "title": "5  Caching",
+    "section": "5.3 Cache invalidation",
+    "text": "5.3 Cache invalidation\nSometimes, the cached object needs to be created again, even though it has been cached before, e.g., because the underlying data changed. Before the new object can be cached, the old one needs to be invalidated. In storr, you can invalidate cached objects by using method del(). del() deletes the pointer to the saved object, so it cannot be found by that name anymore. However, the rds file is still available via its hash. To also delete the object, run the garbage collector using method gc(). It removes all rds files without a name in the cache.\n\n## Delete pointer, i.e., name\ncache$del(\"name\")\n\n## Also delete the rds file of the object\ncache$gc()",
+    "crumbs": [
+      "Other",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Caching</span>"
+    ]
+  },
+  {
+    "objectID": "cache.html#listing-all-names-in-cache",
+    "href": "cache.html#listing-all-names-in-cache",
+    "title": "5  Caching",
+    "section": "5.4 Listing all names in cache",
+    "text": "5.4 Listing all names in cache\nYou can list all names in the cache with method list().\n\ncache$list()",
+    "crumbs": [
+      "Other",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Caching</span>"
+    ]
+  },
+  {
+    "objectID": "cache.html#changing-names",
+    "href": "cache.html#changing-names",
+    "title": "5  Caching",
+    "section": "5.5 Changing names",
+    "text": "5.5 Changing names\nYou can change the name of a cached object by using method duplicate(). It creates another pointer to the same object, i.e., the rds file does not change and is not copied. Afterwards, the old name can be deleted.\n\n## Duplicate the pointer\ncache$duplicate(\"old_name\", \"new_name\")\n\n## Delete old name\ncache$del(\"old_name\")",
+    "crumbs": [
+      "Other",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Caching</span>"
+    ]
+  },
+  {
+    "objectID": "cache.html#namespaces",
+    "href": "cache.html#namespaces",
+    "title": "5  Caching",
+    "section": "5.6 Namespaces",
+    "text": "5.6 Namespaces\nWhen caching many objects, it might be useful to structure the names into subfolder, e.g., putting all multiply imputed datasets into subfolder “mi”. These subfolders are called “namespaces”. You can use them by specifying the corresponding namespace in addition to the name of the object. Please refer to the storr documentation for details. When not using namespaces, all objects are saved in the default namespace, which is called objects.\n\n\n\n\nFitzJohn, Rich. 2025. “Storr: Simple Key Value Stores.” https://doi.org/10.32614/CRAN.package.storr.",
+    "crumbs": [
+      "Other",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Caching</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Buuren, Stef van, and Karin Groothuis-Oudshoorn. 2011.\n“Mice: Multivariate Imputation by\nChained Equations in r” 45: 1–67. https://doi.org/10.18637/jss.v045.i03.\n\n\nFitzJohn, Rich. 2025. “Storr: Simple Key Value Stores.” https://doi.org/10.32614/CRAN.package.storr.",
+    "crumbs": [
+      "References"
     ]
   }
 ]

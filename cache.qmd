@@ -1,0 +1,84 @@
+---
+bibliography: references.bib
+---
+
+# Caching
+
+Some tasks of an analysis take a long time to complete, e.g., multiple imputation or simulation studies. Therefore, running our code from top to bottom can take a long time and unnecessarily repeates some of these steps. "Caching" is a solution to this problem, as it saves the output of said time-intensive tasks and loads them instead of rerunning the code.
+
+We use package `storr` for caching. [@storr] We will use a `rds` cache, which saves cached objects as `rds` files in a specified folder.
+
+## Setting up the cache
+
+First, we need to initialise the cache. Since we use a `rds` cache, we need to create a subfolder in our project folder, called "Cache".
+
+Next, we need to include code in our initialisation script, i.e., the script that runs at the very beginning and loads packages, sets options, etc.
+
+```{r}
+#| eval: false
+cache <- storr::storr_rds("Cache")
+```
+
+Loading `storr` with `library()` is not necessary because this is the only time we call any function that needs `storr::` to be specified. From now on, we interact with the `R6` object that we called `cache`, which knows its methods without spcifying `storr::`. If the cache already exists, the line above "creates the connection".
+
+## Using the cache
+
+The basic methods of the `cache` object are:
+
+-   `set` for saving objects
+-   `get` for loading objects
+-   `exists` for checking if an object with the specified name exists
+
+The basic structure of caching uses an if-else statement to check if the specified object already exists. If yes, the object is loaded from the cache, otherwise the code to create it is evaluated.
+
+```{r}
+#| eval: false
+if (cache$exists("name")) {
+  object <- cache$get("name")
+} else {
+  object <- some_code()
+  ## more code
+  cache$set("name", object)
+}
+```
+
+(`object` and `name` can also be the same.)
+
+## Cache invalidation
+
+Sometimes, the cached object needs to be created again, even though it has been cached before, e.g., because the underlying data changed. Before the new object can be cached, the old one needs to be invalidated. In `storr`, you can invalidate cached objects by using method `del()`. `del()` deletes the pointer to the saved object, so it cannot be found by that name anymore. However, the `rds` file is still available via its hash. To also delete the object, run the garbage collector using method `gc()`. It removes all `rds` files without a name in the cache.
+
+```{r}
+#| eval: false
+## Delete pointer, i.e., name
+cache$del("name")
+
+## Also delete the rds file of the object
+cache$gc()
+```
+
+## Listing all names in cache
+
+You can list all names in the cache with method `list()`.
+
+```{r}
+#| eval: false
+cache$list()
+```
+
+## Changing names
+
+You can change the name of a cached object by using method `duplicate()`. It creates another pointer to the same object, i.e., the `rds` file does not change and is not copied. Afterwards, the old name can be deleted.
+
+```{r}
+#| eval: false
+## Duplicate the pointer
+cache$duplicate("old_name", "new_name")
+
+## Delete old name
+cache$del("old_name")
+```
+
+## Namespaces
+
+When caching many objects, it might be useful to structure the names into subfolder, e.g., putting all multiply imputed datasets into subfolder "mi". These subfolders are called "namespaces". You can use them by specifying the corresponding namespace in addition to the name of the object. Please refer to the `storr` documentation for details. When not using namespaces, all objects are saved in the default namespace, which is called `objects`.
