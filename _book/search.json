@@ -120,6 +120,17 @@
     ]
   },
   {
+    "objectID": "ggplot-miscellaneous.html",
+    "href": "ggplot-miscellaneous.html",
+    "title": "6  ggplot: Miscellaneous",
+    "section": "",
+    "text": "6.1 Providing coordinate values based on plot size\nImagine you want to label a certain value in a distribution and you want this label to be in the centre of the plot (in y direction). However, where the centre exactly is depends on the plotted data. Especially when plotting densities, the y coordinates are not straight-forward to guess. In addition, if you want to write a function, the code should work for all possible datasets.\nThe solution is to first create the plot without the label, extract its size, and use it to annotate the label at the correct position.\n# Load and attach ggplot2\nlibrary(ggplot2)\n\n# Plot variable hwy from dataset mpg\np &lt;- ggplot(mpg, aes(x = hwy)) +\n  geom_density() +\n  theme_bw()\n\np\n\n\n\n\n\n\n\nFigure 6.1: Plot without the label\n# Get minimum and maximum of x and y\nx_min &lt;- ggplot2::layer_scales(p)$x$range$range[1]\nx_max &lt;- ggplot2::layer_scales(p)$x$range$range[2]\ny_min &lt;- ggplot2::layer_scales(p)$y$range$range[1]\ny_max &lt;- ggplot2::layer_scales(p)$y$range$range[2]\n\n# Annotate label to 95% quantile at y = y_max / 2\nq &lt;- quantile(mpg$hwy, 0.95)\n\np +\n  geom_vline(aes(xintercept = q)) +\n  annotate(\n    \"label\", \n    x = q, \n    y = y_max / 2,\n    label = paste0(\"95% quantile: \", q), \n    hjust = \"right\"\n  )\n\n\n\n\n\n\n\nFigure 6.2: Plot with the label in the centre (in y direction)",
+    "crumbs": [
+      "Other",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>ggplot: Miscellaneous</span>"
+    ]
+  },
+  {
     "objectID": "references.html",
     "href": "references.html",
     "title": "References",

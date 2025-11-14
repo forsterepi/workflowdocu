@@ -1,0 +1,46 @@
+# ggplot: Miscellaneous
+
+## Providing coordinate values based on plot size
+
+Imagine you want to label a certain value in a distribution and you want this label to be in the centre of the plot (in y direction). However, where the centre exactly is depends on the plotted data. Especially when plotting densities, the y coordinates are not straight-forward to guess. In addition, if you want to write a function, the code should work for all possible datasets.
+
+The solution is to first create the plot without the label, extract its size, and use it to annotate the label at the correct position.
+
+```{r}
+#| label: fig-coordinates-from-plot-size-1
+#| fig-cap: "Plot without the label"
+
+# Load and attach ggplot2
+library(ggplot2)
+
+# Plot variable hwy from dataset mpg
+p <- ggplot(mpg, aes(x = hwy)) +
+  geom_density() +
+  theme_bw()
+
+p
+```
+
+```{r}
+#| label: fig-coordinates-from-plot-size-2
+#| fig-cap: "Plot with the label in the centre (in y direction)"
+
+# Get minimum and maximum of x and y
+x_min <- ggplot2::layer_scales(p)$x$range$range[1]
+x_max <- ggplot2::layer_scales(p)$x$range$range[2]
+y_min <- ggplot2::layer_scales(p)$y$range$range[1]
+y_max <- ggplot2::layer_scales(p)$y$range$range[2]
+
+# Annotate label to 95% quantile at y = y_max / 2
+q <- quantile(mpg$hwy, 0.95)
+
+p +
+  geom_vline(aes(xintercept = q)) +
+  annotate(
+    "label", 
+    x = q, 
+    y = y_max / 2,
+    label = paste0("95% quantile: ", q), 
+    hjust = "right"
+  )
+```

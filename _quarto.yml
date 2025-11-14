@@ -20,6 +20,7 @@ book:
     - part: "Other"
       chapters: 
         - cache.qmd
+        - ggplot-miscellaneous.qmd
     - references.qmd
 
 bibliography: references.bib
