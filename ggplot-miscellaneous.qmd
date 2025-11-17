@@ -7,24 +7,17 @@ Imagine you want to label a certain value in a distribution and you want this la
 The solution is to first create the plot without the label, extract its size, and use it to annotate the label at the correct position.
 
 ```{r}
-#| label: fig-coordinates-from-plot-size-1
-#| fig-cap: "Plot without the label"
-
 # Load and attach ggplot2
 library(ggplot2)
 
 # Plot variable hwy from dataset mpg
 p <- ggplot(mpg, aes(x = hwy)) +
-  geom_density() +
-  theme_bw()
+  geom_density()
 
 p
 ```
 
 ```{r}
-#| label: fig-coordinates-from-plot-size-2
-#| fig-cap: "Plot with the label in the centre (in y direction)"
-
 # Get minimum and maximum of x and y
 x_min <- ggplot2::layer_scales(p)$x$range$range[1]
 x_max <- ggplot2::layer_scales(p)$x$range$range[2]
@@ -43,4 +36,108 @@ p +
     label = paste0("95% quantile: ", q), 
     hjust = "right"
   )
+```
+
+## Some patchwork patterns
+
+This section provides some patterns for using package `patchwork` [@patchwork] for combining ggplots.
+
+```{r}
+library(patchwork)
+```
+
+### Title for the overall plot
+
+Titles cannot be collected. Instead, a title for the combined graph needs to be specified in the `plot_annotation(title = "Title")` function. `subtitle` and `caption` can be added in the same way.
+
+```{r}
+p1 <- ggplot(mpg, aes(x = cty)) +
+  geom_density()
+
+p2 <- ggplot(mpg, aes(x = hwy)) +
+  geom_density()
+
+p1 + p2 + plot_annotation(title = "Miles per gallon in the city or on the highway")
+```
+
+### Numbering subplots with tags
+
+Subplots can be numbered (e.g., with "A", "B", "C") in `patchwork` using `plot_annotation(tag_levels = "A")`. Possible options for tag_levels are:
+
+-   `'a'` for lowercase letters
+-   `'A'` for uppercase letters
+-   `'1'` for numbers
+-   `'i'` for lowercase Roman numerals
+-   `'I'` for uppercase Roman numerals
+
+`tag_levels` can be combined or individual lists of tags can be specified. Look at the [documentation](https://patchwork.data-imaginist.com/reference/plot_annotation.html) for `plot_annotation()` for examples.
+
+```{r}
+p1 + p2 + 
+  plot_annotation(
+    title = "Miles per gallon in the city (A) or on the highway (B)", 
+    tag_levels = "A"
+  )
+```
+
+### `wrap_plots()`
+
+Sometimes using the patchwork operators (`+`, `|`, `/`) does not work, e.g., because the number of plots is not known in advance, and function `wrap_plots()` needs to be used instead. Here, guides/legends and axes can be collected as well. Function `plot_annotation()` is added with the `+` operator.
+
+```{r}
+#| message: false
+
+library(tidyverse)
+
+mpg$year %>% 
+  unique() %>% 
+  purrr::map(\(x) mpg %>% filter(year == x)) %>% 
+  purrr::map(\(x) ggplot(x, aes(x = cty, y = hwy, color = drv)) + geom_point()) %>% 
+  wrap_plots(., 
+    guides = "collect", 
+    axes = "collect"
+  ) +
+  plot_annotation(tag_level = "A")
+```
+
+###  Changing legend position
+
+Operators `&` and `*` can be used to add plot elements to multiple/all plots in the combined graph. See the [documentation](https://patchwork.data-imaginist.com/reference/plot_arithmetic.html) of the operators for more information. One application is that the legend position can be adjusted in the combined plot.
+
+```{r}
+mpg$year %>% 
+  unique() %>% 
+  purrr::map(\(x) mpg %>% filter(year == x)) %>% 
+  purrr::map(\(x) ggplot(x, aes(x = cty, y = hwy, color = drv)) + geom_point()) %>% 
+  wrap_plots(., 
+    guides = "collect", 
+    axes = "collect"
+  ) +
+  plot_annotation(tag_level = "A") &
+  theme(legend.position = "bottom")
+```
+
+Please note that this approach overwrites existing specifications in the individual plots.
+
+```{r}
+p1 <- mpg %>% 
+  filter(year == 1999) %>% 
+  ggplot(aes(x = cty, y = hwy, color = drv)) +
+  geom_point() +
+  theme(legend.position = "none")
+
+p2 <- mpg %>% 
+  filter(year == 2008) %>% 
+  ggplot(aes(x = cty, y = hwy, color = drv)) +
+  geom_point() +
+  theme(legend.position = "left")
+
+# Legends as specified in the individual plots
+p1 + p2
+
+# Both legends move to the top
+p1 + p2 & theme(legend.position = "top")
+
+# Collecting legends moves them to the right by default
+p1 + p2 + plot_layout(guides = 'collect')
 ```

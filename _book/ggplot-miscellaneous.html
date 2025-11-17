@@ -54,7 +54,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -243,6 +263,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#providing-coordinate-values-based-on-plot-size" id="toc-providing-coordinate-values-based-on-plot-size" class="nav-link active" data-scroll-target="#providing-coordinate-values-based-on-plot-size"><span class="header-section-number">6.1</span> Providing coordinate values based on plot size</a></li>
+  <li><a href="#some-patchwork-patterns" id="toc-some-patchwork-patterns" class="nav-link" data-scroll-target="#some-patchwork-patterns"><span class="header-section-number">6.2</span> Some patchwork patterns</a>
+  <ul class="collapse">
+  <li><a href="#title-for-the-overall-plot" id="toc-title-for-the-overall-plot" class="nav-link" data-scroll-target="#title-for-the-overall-plot"><span class="header-section-number">6.2.1</span> Title for the overall plot</a></li>
+  <li><a href="#numbering-subplots-with-tags" id="toc-numbering-subplots-with-tags" class="nav-link" data-scroll-target="#numbering-subplots-with-tags"><span class="header-section-number">6.2.2</span> Numbering subplots with tags</a></li>
+  <li><a href="#wrap_plots" id="toc-wrap_plots" class="nav-link" data-scroll-target="#wrap_plots"><span class="header-section-number">6.2.3</span> <code>wrap_plots()</code></a></li>
+  <li><a href="#changing-legend-position" id="toc-changing-legend-position" class="nav-link" data-scroll-target="#changing-legend-position"><span class="header-section-number">6.2.4</span> Changing legend position</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -278,19 +305,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot variable hwy from dataset mpg</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(<span class="at">x =</span> hwy)) <span class="sc">+</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="fig-coordinates-from-plot-size-1" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-coordinates-from-plot-size-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="ggplot-miscellaneous_files/figure-html/fig-coordinates-from-plot-size-1-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-coordinates-from-plot-size-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.1: Plot without the label
-</figcaption>
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -315,20 +336,162 @@ Figure&nbsp;6.1: Plot without the label
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="st">"right"</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="fig-coordinates-from-plot-size-2" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-coordinates-from-plot-size-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="ggplot-miscellaneous_files/figure-html/fig-coordinates-from-plot-size-2-1.png" class="img-fluid figure-img" width="672">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-coordinates-from-plot-size-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.2: Plot with the label in the centre (in y direction)
-</figcaption>
+</div>
+</div>
+</section>
+<section id="some-patchwork-patterns" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="some-patchwork-patterns"><span class="header-section-number">6.2</span> Some patchwork patterns</h2>
+<p>This section provides some patterns for using package <code>patchwork</code> <span class="citation" data-cites="patchwork">(<a href="references.html#ref-patchwork" role="doc-biblioref">Pedersen 2025</a>)</span> for combining ggplots.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="title-for-the-overall-plot" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="title-for-the-overall-plot"><span class="header-section-number">6.2.1</span> Title for the overall plot</h3>
+<p>Titles cannot be collected. Instead, a title for the combined graph needs to be specified in the <code>plot_annotation(title = "Title")</code> function. <code>subtitle</code> and <code>caption</code> can be added in the same way.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(<span class="at">x =</span> cty)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(<span class="at">x =</span> hwy)) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Miles per gallon in the city or on the highway"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="numbering-subplots-with-tags" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="numbering-subplots-with-tags"><span class="header-section-number">6.2.2</span> Numbering subplots with tags</h3>
+<p>Subplots can be numbered (e.g., with “A”, “B”, “C”) in <code>patchwork</code> using <code>plot_annotation(tag_levels = "A")</code>. Possible options for tag_levels are:</p>
+<ul>
+<li><code>'a'</code>&nbsp;for lowercase letters</li>
+<li><code>'A'</code>&nbsp;for uppercase letters</li>
+<li><code>'1'</code>&nbsp;for numbers</li>
+<li><code>'i'</code>&nbsp;for lowercase Roman numerals</li>
+<li><code>'I'</code>&nbsp;for uppercase Roman numerals</li>
+</ul>
+<p><code>tag_levels</code> can be combined or individual lists of tags can be specified. Look at the <a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html">documentation</a> for <code>plot_annotation()</code> for examples.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Miles per gallon in the city (A) or on the highway (B)"</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_levels =</span> <span class="st">"A"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="wrap_plots" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="wrap_plots"><span class="header-section-number">6.2.3</span> <code>wrap_plots()</code></h3>
+<p>Sometimes using the patchwork operators (<code>+</code>, <code>|</code>, <code>/</code>) does not work, e.g., because the number of plots is not known in advance, and function <code>wrap_plots()</code> needs to be used instead. Here, guides/legends and axes can be collected as well. Function <code>plot_annotation()</code> is added with the <code>+</code> operator.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mpg<span class="sc">$</span>year <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(\(x) mpg <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> x)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(\(x) <span class="fu">ggplot</span>(x, <span class="fu">aes</span>(<span class="at">x =</span> cty, <span class="at">y =</span> hwy, <span class="at">color =</span> drv)) <span class="sc">+</span> <span class="fu">geom_point</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wrap_plots</span>(., </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">guides =</span> <span class="st">"collect"</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axes =</span> <span class="st">"collect"</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">tag_level =</span> <span class="st">"A"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="changing-legend-position" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="changing-legend-position"><span class="header-section-number">6.2.4</span> Changing legend position</h3>
+<p>Operators <code>&amp;</code> and <code>*</code> can be used to add plot elements to multiple/all plots in the combined graph. See the <a href="https://patchwork.data-imaginist.com/reference/plot_arithmetic.html">documentation</a> of the operators for more information. One application is that the legend position can be adjusted in the combined plot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mpg<span class="sc">$</span>year <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(\(x) mpg <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> x)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(\(x) <span class="fu">ggplot</span>(x, <span class="fu">aes</span>(<span class="at">x =</span> cty, <span class="at">y =</span> hwy, <span class="at">color =</span> drv)) <span class="sc">+</span> <span class="fu">geom_point</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wrap_plots</span>(., </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">guides =</span> <span class="st">"collect"</span>, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">axes =</span> <span class="st">"collect"</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(<span class="at">tag_level =</span> <span class="st">"A"</span>) <span class="sc">&amp;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Please note that this approach overwrites existing specifications in the individual plots.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> mpg <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">1999</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cty, <span class="at">y =</span> hwy, <span class="at">color =</span> drv)) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> mpg <span class="sc">%&gt;%</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2008</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cty, <span class="at">y =</span> hwy, <span class="at">color =</span> drv)) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"left"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Legends as specified in the individual plots</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Both legends move to the top</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Collecting legends moves them to the right by default</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">'collect'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-8-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-patchwork" class="csl-entry" role="listitem">
+Pedersen, Thomas Lin. 2025. <span>“Patchwork: The Composer of Plots.”</span> <a href="https://doi.org/10.32614/CRAN.package.patchwork">https://doi.org/10.32614/CRAN.package.patchwork</a>.
+</div>
+</div>
+</section>
 </section>
 
 </main> <!-- /main -->
