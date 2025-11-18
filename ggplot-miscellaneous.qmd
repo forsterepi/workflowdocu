@@ -100,7 +100,7 @@ mpg$year %>%
   plot_annotation(tag_level = "A")
 ```
 
-###  Changing legend position
+### Changing legend position
 
 Operators `&` and `*` can be used to add plot elements to multiple/all plots in the combined graph. See the [documentation](https://patchwork.data-imaginist.com/reference/plot_arithmetic.html) of the operators for more information. One application is that the legend position can be adjusted in the combined plot.
 
@@ -140,4 +140,25 @@ p1 + p2 & theme(legend.position = "top")
 
 # Collecting legends moves them to the right by default
 p1 + p2 + plot_layout(guides = 'collect')
+```
+
+## Changing color or fill to log scale
+
+A log transformation can be included in the `scale_color_*()` and `scale_fill_*()` functions via argument `transform = "log"`. When using the log transform, the numbers in the legend are automatically created and usually have decimals. Use argument `breaks` to specify better values.
+
+```{r}
+# No tranformation
+ggplot(diamonds, aes(x = depth, y = carat, color = price)) +
+  geom_point() +
+  scale_color_distiller(palette = "PuOr")
+
+# Log tranformation causes legend numbers to change
+ggplot(diamonds, aes(x = depth, y = carat, color = price)) +
+  geom_point() +
+  scale_color_distiller(palette = "PuOr", transform = "log")
+
+# Specify numbers in legend with 'breaks'
+ggplot(diamonds, aes(x = depth, y = carat, color = price)) +
+  geom_point() +
+  scale_color_distiller(palette = "PuOr", transform = "log", breaks = c(500, 2500, 10000))
 ```

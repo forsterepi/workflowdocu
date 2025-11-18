@@ -270,6 +270,7 @@ div.csl-indent {
   <li><a href="#wrap_plots" id="toc-wrap_plots" class="nav-link" data-scroll-target="#wrap_plots"><span class="header-section-number">6.2.3</span> <code>wrap_plots()</code></a></li>
   <li><a href="#changing-legend-position" id="toc-changing-legend-position" class="nav-link" data-scroll-target="#changing-legend-position"><span class="header-section-number">6.2.4</span> Changing legend position</a></li>
   </ul></li>
+  <li><a href="#changing-color-or-fill-to-log-scale" id="toc-changing-color-or-fill-to-log-scale" class="nav-link" data-scroll-target="#changing-color-or-fill-to-log-scale"><span class="header-section-number">6.3</span> Changing color or fill to log scale</a></li>
   </ul>
 </nav>
     </div>
@@ -484,6 +485,46 @@ div.csl-indent {
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="changing-color-or-fill-to-log-scale" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="changing-color-or-fill-to-log-scale"><span class="header-section-number">6.3</span> Changing color or fill to log scale</h2>
+<p>A log transformation can be included in the <code>scale_color_*()</code> and <code>scale_fill_*()</code> functions via argument <code>transform = "log"</code>. When using the log transform, the numbers in the legend are automatically created and usually have decimals. Use argument <code>breaks</code> to specify better values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># No tranformation</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x =</span> depth, <span class="at">y =</span> carat, <span class="at">color =</span> price)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_distiller</span>(<span class="at">palette =</span> <span class="st">"PuOr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Log tranformation causes legend numbers to change</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x =</span> depth, <span class="at">y =</span> carat, <span class="at">color =</span> price)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_distiller</span>(<span class="at">palette =</span> <span class="st">"PuOr"</span>, <span class="at">transform =</span> <span class="st">"log"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify numbers in legend with 'breaks'</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x =</span> depth, <span class="at">y =</span> carat, <span class="at">color =</span> price)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_distiller</span>(<span class="at">palette =</span> <span class="st">"PuOr"</span>, <span class="at">transform =</span> <span class="st">"log"</span>, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="dv">2500</span>, <span class="dv">10000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ggplot-miscellaneous_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
@@ -491,7 +532,6 @@ div.csl-indent {
 Pedersen, Thomas Lin. 2025. <span>“Patchwork: The Composer of Plots.”</span> <a href="https://doi.org/10.32614/CRAN.package.patchwork">https://doi.org/10.32614/CRAN.package.patchwork</a>.
 </div>
 </div>
-</section>
 </section>
 
 </main> <!-- /main -->
