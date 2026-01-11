@@ -130,7 +130,7 @@ This module describes the simplest test of adjusting for outcome misclassificati
 #### Parameters
 
 | Parameter | Description |
-|------------------|------------------------------------------------------|
+|-------------------|-----------------------------------------------------|
 | $p_{True}$ | Probability of having the true outcome $Y_{True}$ |
 | $SE$ | Probability of observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is present (Sensitivity) |
 | $SP$ | Probability of not observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is absent (Specificity) |
@@ -188,7 +188,7 @@ This module introduces a single binary predictor of the binary misclassified out
 #### Assumptions
 
 | Assumption | Justification |
-|----------------------------------------------|-------------------------|
+|----------------------------------------------|--------------------------|
 | The probability of the outcome is influenced by a single binary predictor. | \<\<evaluate\>\> |
 | Non-differential misclassification | \<\<evaluate\>\> |
 
@@ -197,7 +197,7 @@ This module introduces a single binary predictor of the binary misclassified out
 #### Variables
 
 | Variable   | Description                                                  |
-|----------------|--------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | $X$        | A binary predictor variable                                  |
 | $p_{True}$ | Individual probability of having the true outcome $Y_{True}$ |
 | $Y_{True}$ | The true values of outcome variable Y                        |
@@ -208,7 +208,7 @@ This module introduces a single binary predictor of the binary misclassified out
 #### Parameters
 
 | Parameter | Description |
-|-----------------|------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | $p_X$ | Probability of having the binary predictor variable |
 | $p(\alpha)$ | Probability of having the true outcome $Y_{True}$ for individuals without the predictor |
 | $OR_X$ | Ratio of odds of the true outcome $Y_{True}$ for individuals with the predictor compared to individuals without the predictor |
@@ -263,7 +263,7 @@ digraph sim_mod_gr_2 {
 }
 ```
 
-#### Code
+#### Code {#sec-me-sim-example}
 
 ```{r}
 #| code-fold: true

@@ -1,16 +1,312 @@
 # Simulation
 
-intro, workflow, packages
+Simulations are an important part of the pre-data step in statistical analyses. The basic steps are:
 
-## Creating simulation modules in `simcausal`
+-   Create simulation modules
+-   Test simulation modules
+-   Run simulation studies
+-   Document simulation modules and simulation studies in quarto project report
 
-## Running simulation in `simChef`
+Simulation modules are recipes for creating data that is analysed in simulation studies. They therefore represent the data-generating process and contain important assumptions about the causal model. Specifying detailed simulations can therefore also help to think about and communicate your causal model.
 
-## Documenting simulations in `Quarto`
+Simulation studies help in validating the following domains [@betancourt2020]:
 
-## 
+-   Domain Expertise Consistency: Is our model consistent with our domain expertise?
+-   Computational Faithfulness: Will our computational tools be sufficient to accurately fit our model?
+-   Inferential Adequacy: Will our inference provide enough information to answer our questions?
+-   Model Adequacy: Is our model rich enough to capture the relevant structure of the true data generating process?
 
-### Template
+The following packages are used:
+
+-   Creating simulation modules: `simcausal` [@simcausal]
+-   Running simulation studies: `simChef` [@simChef]
+
+## Creating simulation modules with `simcausal`
+
+Simulation modules are created with the following basic code.
+
+```{r}
+#| eval: false
+sim_mod <- DAG.empty() %>% 
+  add.nodes(
+    node("name",
+      t = 0,
+      distr = "",
+      ...
+    )
+  ) %>% 
+  add.nodes(
+    node("name",
+      t = 1:2,
+      distr = "",
+      ...
+    )
+  )
+```
+
+-   `DAG.empty()` creates an empty DAG
+-   Pipe into `add.nodes()` to add a single variable with `node()`
+-   Inside `node()`, specify a name, a distribution `distr`, and the parameters of this distribution
+-   Specify timepoint `t`, if you simulate longitudinal data. For background variables, use `t = 0`. Once, you used `t`, all subsequent variables also need it. For cross-sectional data, `t` can be omitted.
+-   Repeat piping into `add.nodes()` to add a single variable with `node()`
+
+Here are some distributions and there parameters:
+
+-   `rconst`: `const`
+-   `rbern`: `prob`
+-   `rnorm`: `mean`, `sd`
+-   `truncnorm::rtruncnorm`: `a`, `b`, `mean`, `sd`
+-   `supfuns::rdiscunif`: `min`, `max`
+-   `rpois`: `lambda`
+
+If the value of a parameter depends on the value of another variable, make sure to add the depending variable after the variable it depends on. Include the variable by its name and add the time in square brackets. Use one or more `ifelse()` to code the dependencies.
+
+```{r}
+#| eval: false
+sim_mod <- DAG.empty() %>% 
+  add.nodes(
+    node("asthma",
+      t = 1,
+      distr = "rbern",
+      prob = p_asthma_1
+    )
+  ) %>% 
+  add.nodes(
+    node("asthma", 
+      t = 2:5,
+      distr = "rbern",
+      prob = ifelse(asthma[t - 1] == 1,
+        1 - p_remission,
+        p_relapse
+      )
+    )
+  )
+```
+
+In the code above, note how you can re-use the name (`"asthma"`) if `t` differs. `asthma[1]` needs to be defined first, because its `prob` parameter is different from the `t = 2:5` as it does not depend on a previous asthma status. Note also that `t` can be used when addressing a simulated variable. `prob` of `asthma[2]` depends on `asthma[1]`, `prob` of `asthma[3]` depends on `asthma[2]`, etc. Also note that in addition to variable `asthma`, there are parameters `p_asthma_1`, `p_remission`, `p_relapse`. Parameters have a single value that is the same for all simulated observations. However, since we want to change parameter values in simulation studies, we use a variable, i.e., placeholder. In addition to the code, the R script of a simulation module should include a list and description of variables and parameters.
+
+```{r}
+#| eval: false
+# Title -------------------------------------------------------------------
+# Project Title: ...
+# Script Title: ...
+
+# Script Description: Creating simulation module "..."
+
+
+## Variables:
+# asthma[1:5] (binary asthma indicator)
+
+## Parameters:
+# p_asthma_1 (probability of asthma at time 1)
+# p_remission (probability of asthma remission)
+# p_relapse (probability of asthma relapse)
+
+
+# Module ------------------------------------------------------------------
+
+sim_mod_asthma <- DAG.empty() %>% 
+  add.nodes(
+    node("asthma",
+      t = 1,
+      distr = "rbern",
+      prob = p_asthma_1
+    )
+  ) %>% 
+  add.nodes(
+    node("asthma", 
+      t = 2:5,
+      distr = "rbern",
+      prob = ifelse(asthma[t - 1] == 1,
+        1 - p_remission,
+        p_relapse
+      )
+    )
+  )
+```
+
+Multiple simulation modules can be combined with each other and variables from earlier modules can be used in later modules. The complete DAG, i.e., after combining simulation modules, cannot include the same variables multiple times, and therefore, when you create modules that are always combined, don't include variables from earlier modules in later modules. Also, when using `supfuns::run_sim()`, make sure that the modules are listed in the correct order in the list passed to argument `dags`.
+
+## Testing simulation modules {#sec-sim-testing}
+
+Before conducting simulation studies, test if the module has been implemented correctly. For this, simulate some data based on pre-specified parameter values and evaluate if they can be recovered. The workflow for running simulation studies is also used for testing simulation modules. See an example below:
+
+```{r}
+#| code-fold: true
+#| code-summary: Example of testing a simulation module
+#| file: R/test_sim_model_outc_miscl_2.R
+#| eval: false
+```
+
+## Running simulation studies with `simChef`
+
+Simulation studies need the following steps:
+
+-   Prepare experiment
+    -   Create functions
+    -   Create experiment
+-   Run experiment
+-   Visualise
+
+All steps are written in a single R script, which is included in the quarto report using `#| file:...`. See an example in @sec-me-sim-example.
+
+### Prepare experiment
+
+#### Create functions
+
+First, functions used in the simulation experiments need to be created. `simChef` knows the following types:
+
+-   Data-generating process (DGP): Provide exactly one DGP function
+-   Method: Describes analysis methods. Provide one or more.
+-   Evaluator: Post-processing. Not necessary but a single evaluator can be provided.
+-   Visualiser: Not used. Create plots after completing the simulation.
+
+##### DGP
+
+Arguments of the DGP function are the simulation modules' parameters as well as `n`, which describes the number of simulated observations.
+
+If any parameters are drawn from a distribution, start the function with drawing a single value.
+
+Next, create the list of simulation module objects that is passed to argument `dags` of `supfuns::run_sim()`. Make sure to list them in the correct order.
+
+Next, create the list of parameters that is passed to argument `args` of `supfuns::run_sim()` from the arguments of the DGP function and the values drawn from distributions.
+
+Next, run function `supfuns::run_sim()`.
+
+Finally, return values. Return at least the data.frame created by `supfuns::run_sim()` and add parameter values in case they are needed by method or evaluator functions.
+
+```{r}
+#| eval: false
+sim_dgp <- function(n, par_a, par_b) {
+  par_c <- rbeta(1, 5, 10)
+  
+  dags <- list(sim_mod_1, sim_mod_2)
+  args <- list(
+    par_a = par_a,
+    par_b = par_b,
+    par_c = par_c
+  )
+  
+  df <- run_sim(
+    dags = dags,
+    args = args,
+    n = n
+  )
+  
+  out <- list(
+    df = df,
+    par_a = par_a
+  )
+  
+  return(out)
+}
+```
+
+##### Methods
+
+Method functions have exactly the arguments that are returned by the DGP function, i.e., at least `df` and maybe additional simulation module parameters. Note that all method functions need to have all returned values as arguments, i.e., even if an additional parameter is only needed by one of the method functions, this additional parameter nonetheless needs to be an argument of all method functions.
+
+Method functions analyse the simulated data.frame and return analysis results. You can either conduct summaries here or move them to the evaluator function. Always name the elements in the list returned by the function.
+
+```{r}
+#| eval: false
+sim_method <- function(df, par_a) {
+  m <- glm(y ~ x, data = df)
+  
+  out <- list(
+    model = m,
+    nobs = nobs(m)
+  )
+  
+  return(out)
+}
+```
+
+##### Evaluator
+
+A function that usually has the single argument `fit_results` and also returns the object `fit_results`. The function processes the method functions' results.
+
+```{r}
+#| eval: false
+sim_eval <- function(fit_results) {
+  fit_results %<>%
+    ...
+  
+  return(fit_results)
+}
+```
+
+#### Create experiment
+
+Next, based on the functions, simulation study elements must be created using `simChef::create_dgp()`, `simChef::create_method()`, and `simChef::create_evaluator()`.
+
+```{r}
+#| eval: false
+dgp <- create_dgp(
+  .dgp_fun = sim_dgp,
+  .name = "dgp"
+)
+
+meth <- create_method(
+  .method_fun = sim_method,
+  .name = "regression"
+)
+
+ev <- create_evaluator(
+  .eval_fun = sim_eval,
+  .name = "eval"
+)
+```
+
+Next, one or more experiments need to be created using `simChef::create_experiment()`. Provide a name to the experiment, as well as `future.packages` and `future.globals`, if you want to use parallelisation. `future.packages` contains packages used in DGP, method, and evaluator functions. It contains at least `supfuns` as `run_sim()` is always used. `future.global` contains the simulation module objects.
+
+Then, add DGP, method, and evaluator simulation study elements to the experiment using `simChef::add_dgp()`, `simChef::add_method()`, and `simChef::add_evaluator()`.
+
+Finally, use `simChef::add_vary_across()` to specify parameter values. Specify your DGP simulation study element for argument `.dgp` and include all arguments of the DGP function as arguments of `add_vary_across()`. Pass a list to each argument that contains one or more parameter values. All possible combinations of provided values are simulated. Then remove functions and simulation study elements.
+
+```{r}
+#| eval: false
+sim_exp <- create_experiment(
+  name = "My simulation study",
+  future.packages = "supfuns",
+  future.globals = c("sim_mod_1", "sim_mod_2")
+) %>% 
+  add_dgp(dgp) %>% 
+  add_method(meth) %>% 
+  add_evaluator(ev) %>% 
+  add_vary_across(
+    .dgp = dgp,
+    n = list(1000),
+    par_a = list(0.5), 
+    par_b = list(0.3, 0.4, 0.8)
+  )
+
+rm(sim_dgp, sim_method, sim_eval, dgp, meth, ev)
+```
+
+### Run experiment
+
+After the experiment has been created, use `simChef::run_experiment()` to run the simulation study. Use caching as described below.
+
+```{r}
+#| eval: false
+if (cache$exists("sim_result")) {
+  sim_result <- cache$get("sim_result")
+} else {
+  sim_result <- sim_exp %>%
+    run_experiment(n_reps = 100, save = FALSE)
+  cache$set("sim_result", sim_result)
+}
+rm(sim_exp)
+```
+
+### Visualise
+
+Finally, create plots from the simulated data.
+
+## Documenting simulation modules in `quarto`
+
+Simulation modules are documented in the "Pre-data" chapter of a project report. Sub-chapter "Causal model" contains one sub-chapter for each simulation module. See the template below and examples in @sec-sim-mod-1 and @sec-sim-mod-2.
 
 ### Module \<number\>: \<name\>
 
@@ -45,7 +341,7 @@ intro, workflow, packages
 
 #### Technical details
 
-#### Equation block
+##### Equation block
 
 -   The complete equation is inside double `$$`, i.e., double `$$` as both the first and the last line
 -   Use align to align all equations at `=` or `~`
@@ -60,23 +356,12 @@ intro, workflow, packages
     -   To specify, in which cases a equation is applied, end all equations in the cases block with `, &\quad\text{for} x = 1`
     -   `&` in front of `\quad` is used for aligning them
 
-#### Stan
-
-1.  Create an R code block
-2.  Use options:
-    a.  `#| class-output: stan`
-    b.  `#| echo: false`
-3.  Input code
-    a.  For a stan file use: `cat(readLines("Stan/file_name.stan"), sep = "\n")`
-    b.  For a few lines use: `cat(c("Line 1", "Line 2", "..."), sep = "\n")`
-    c.  Example for b.: `cat(c("// Priors", "a ~ normal(-3.4, 0.6);", "b ~ normal(0, 0.7);"), sep = "\n")`
-
-#### Graphs
+##### Graphs
 
 1.  Type `/dot` until `GraphViz Code Chunk` is suggested, then click `tab`
 2.  YAML options in the codeblock start with `//|`
     a.  `//| label: fig-graph-module<number>`
-    b.  `//| fig-cap: 'Graph of simulation module "x" (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)'`
+    b.  `//| fig-cap: 'Graph of simulation module "<name>" (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)'`
     c.  `//| fig-height: 2`; fig-height is often needed to delete too much white space above and below the graph. Large graphs do not need it. Sometimes, other values give better results, e.g., 3.
 3.  Start with `digraph` keyword, graph name, e.g., `sim_mod_1`, and curly brackets: `digraph sim_mod_number {}`; All code goes inside the curly brackets.
 4.  Options:
@@ -90,7 +375,7 @@ intro, workflow, packages
 ```{dot}
 //| echo: true
 //| label: fig-graph-module1 
-//| fig-cap: 'Graph of simulation module "x" (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)' 
+//| fig-cap: 'Graph of simulation module "name" (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)' 
 //| fig-height: 2 
 digraph m_a {   
   rankdir = LR   
@@ -105,4 +390,57 @@ digraph m_a {
 }
 ```
 
-#### Code
+##### Code
+
+1.  Create an R code chunk
+2.  Add three YAML options:
+    a.  `code-fold: true`
+    b.  `code-summary: "Create module '<name>' in simcausal"`
+    c.  `file: R/<file name>.R`
+
+## Documenting simulation studies in `quarto`
+
+Simulation studies are documented in the "Pre-data" chapter of a project report. Sub-chapter "Simulation" contains one sub-chapter for each simulation module. In addition, the first sub-chapter of "Simulation" is called "Testing" and contains the evaluation, if the simulation modules have been implemented correctly (see @sec-sim-testing). See the template below.
+
+### Simulation \<number\>: \<name\>
+
+\<Short description of simulation study and included simulation modules\>
+
++--------------------------------------------------------------+--------------------------------------------------------+
+| Parameter                                                    | Input values                                           |
++==============================================================+========================================================+
+| \<Parameter 1 using $Inline Math$\>                          | \<Parameter 1 input value\>                            |
++--------------------------------------------------------------+--------------------------------------------------------+
+| \<Parameter 2 with different scenarios using $Inline Math$\> | Scenario A: \<Parameter 2 input value for scenario A\> |
+|                                                              |                                                        |
+|                                                              | Scenario B: \<Parameter 2 input value for scenario B\> |
++--------------------------------------------------------------+--------------------------------------------------------+
+| ...                                                          | ...                                                    |
++--------------------------------------------------------------+--------------------------------------------------------+
+
+: Input values for simulation \<number\> {#tbl-sim\<number\>-input}
+
+\<Description of simuation procedure, i.e. data-generating processes, including number of replications, number of simulated observation, descriptions and justifications for input values and different input value scenarios\>
+
+\<Description of analysis methods\>
+
+\<Include code chunk with the simulation script
+
+-   `code-fold: true`
+-   `code-summary: "Running simulation <number>"`
+-   `file: R/pre_3_<number>_sim<number>.R`\>
+
+\<Description of simulation results\>
+
+\<End of template\>
+
+#### How to include Stan models?
+
+1.  Create an R code block
+2.  Use options:
+    a.  `#| class-output: stan`
+    b.  `#| echo: false`
+3.  Input code
+    a.  For a stan file use: `cat(readLines("Stan/file_name.stan"), sep = "\n")`
+    b.  For a few lines use: `cat(c("Line 1", "Line 2", "..."), sep = "\n")`
+    c.  Example for b.: `cat(c("// Priors", "a ~ normal(-3.4, 0.6);", "b ~ normal(0, 0.7);"), sep = "\n")`
