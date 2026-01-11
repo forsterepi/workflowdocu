@@ -1,3 +1,108 @@
 # Simulation
 
-x
+intro, workflow, packages
+
+## Creating simulation modules in `simcausal`
+
+## Running simulation in `simChef`
+
+## Documenting simulations in `Quarto`
+
+## 
+
+### Template
+
+### Module \<number\>: \<name\>
+
+\<Short module description\>
+
+#### Assumptions
+
+| Assumption       | Justification       |
+|------------------|---------------------|
+| \<Assumption 1\> | \<Justification 1\> |
+| ...              | ...                 |
+
+: Assumptions of simulation module "\<name\>" {#tbl-module\<number\>-asmp}
+
+#### Variables
+
+| Variable                           | Description                |
+|------------------------------------|----------------------------|
+| \<Variable 1 using $Inline Math$\> | \<Variable description 1\> |
+| ...                                | ...                        |
+
+: Variables of simulation module "\<name\>" {#tbl-module\<number\>-var}
+
+#### Parameters
+
+| Parameter                           | Description                 |
+|-------------------------------------|-----------------------------|
+| \<Parameter 1 using $Inline Math$\> | \<Parameter description 1\> |
+| ...                                 | ...                         |
+
+: Parameters of simulation module "\<name\>" {#tbl-module\<number\>-par}
+
+#### Technical details
+
+#### Equation block
+
+-   The complete equation is inside double `$$`, i.e., double `$$` as both the first and the last line
+-   Use align to align all equations at `=` or `~`
+    -   Second line, i.e., directly after `$$`, is `\begin{align}`
+    -   Second to last line, i.e., directly before `$$`, is `\end{align}`
+    -   Add `&` in front of the symbols to align, i.e., use `&=` for $=$ and `&\sim` for $\sim$
+-   Use `\text{some text}` to write `some text` in more of a text format than an equation format
+-   Use `_` for subscript and include the subcript in curly brackets if it is longer than 1 character, e.g.: `Y_{True}` or `p_X`
+-   End your equations with `\\` to start a new equation in a new line
+-   Cases
+    -   Start with `\begin{cases}` and end with `\end{cases}`
+    -   To specify, in which cases a equation is applied, end all equations in the cases block with `, &\quad\text{for} x = 1`
+    -   `&` in front of `\quad` is used for aligning them
+
+#### Stan
+
+1.  Create an R code block
+2.  Use options:
+    a.  `#| class-output: stan`
+    b.  `#| echo: false`
+3.  Input code
+    a.  For a stan file use: `cat(readLines("Stan/file_name.stan"), sep = "\n")`
+    b.  For a few lines use: `cat(c("Line 1", "Line 2", "..."), sep = "\n")`
+    c.  Example for b.: `cat(c("// Priors", "a ~ normal(-3.4, 0.6);", "b ~ normal(0, 0.7);"), sep = "\n")`
+
+#### Graphs
+
+1.  Type `/dot` until `GraphViz Code Chunk` is suggested, then click `tab`
+2.  YAML options in the codeblock start with `//|`
+    a.  `//| label: fig-graph-module<number>`
+    b.  `//| fig-cap: 'Graph of simulation module "x" (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)'`
+    c.  `//| fig-height: 2`; fig-height is often needed to delete too much white space above and below the graph. Large graphs do not need it. Sometimes, other values give better results, e.g., 3.
+3.  Start with `digraph` keyword, graph name, e.g., `sim_mod_1`, and curly brackets: `digraph sim_mod_number {}`; All code goes inside the curly brackets.
+4.  Options:
+    a.  `rankdir = LR`
+    b.  `bgcolor = "transparent"`
+5.  Variable specification: Start with the name and add options in brackets `node_name []`
+    a.  `label =`; Put label inside `< >`; put subscript inside `<SUB> </SUB>`
+    b.  `shape =`; no shape for variables (ellipses), `box` for variables from other modules, `diamond` for parameters
+6.  Edges: `node_name1 -> node_name2`
+
+```{dot}
+//| echo: true
+//| label: fig-graph-module1 
+//| fig-cap: 'Graph of simulation module "x" (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)' 
+//| fig-height: 2 
+digraph m_a {   
+  rankdir = LR   
+  bgcolor = "transparent"      
+  
+  from_other_module [label = <From other<SUB>module</SUB>>, shape = box]      
+  var [label = <Var<SUB>1</SUB>>]      
+  par [label = <A parameter>, shape = diamond]      
+  
+  from_other_module -> var   
+  par -> var 
+}
+```
+
+#### Code

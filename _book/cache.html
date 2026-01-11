@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>5&nbsp; Caching – Workflow Documentation</title>
+<title>6&nbsp; Caching – Workflow Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,7 +85,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./ggplot-miscellaneous.html" rel="next">
-<link href="./hmm.html" rel="prev">
+<link href="./measurement-error.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -135,7 +135,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cache.html">Other</a></li><li class="breadcrumb-item"><a href="./cache.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Caching</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cache.html">Other</a></li><li class="breadcrumb-item"><a href="./cache.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Caching</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -221,6 +221,12 @@ div.csl-indent {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Hidden Markov Models</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./measurement-error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Error</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -235,13 +241,13 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./cache.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Caching</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Caching</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ggplot-miscellaneous.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">ggplot: Miscellaneous</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">ggplot: Miscellaneous</span></span></a>
   </div>
 </li>
       </ul>
@@ -262,21 +268,21 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#setting-up-the-cache" id="toc-setting-up-the-cache" class="nav-link active" data-scroll-target="#setting-up-the-cache"><span class="header-section-number">5.1</span> Setting up the cache</a></li>
-  <li><a href="#using-the-cache" id="toc-using-the-cache" class="nav-link" data-scroll-target="#using-the-cache"><span class="header-section-number">5.2</span> Using the cache</a></li>
-  <li><a href="#cache-invalidation" id="toc-cache-invalidation" class="nav-link" data-scroll-target="#cache-invalidation"><span class="header-section-number">5.3</span> Cache invalidation</a></li>
-  <li><a href="#listing-all-names-in-cache" id="toc-listing-all-names-in-cache" class="nav-link" data-scroll-target="#listing-all-names-in-cache"><span class="header-section-number">5.4</span> Listing all names in cache</a></li>
-  <li><a href="#changing-names" id="toc-changing-names" class="nav-link" data-scroll-target="#changing-names"><span class="header-section-number">5.5</span> Changing names</a></li>
-  <li><a href="#namespaces" id="toc-namespaces" class="nav-link" data-scroll-target="#namespaces"><span class="header-section-number">5.6</span> Namespaces</a></li>
+  <li><a href="#setting-up-the-cache" id="toc-setting-up-the-cache" class="nav-link active" data-scroll-target="#setting-up-the-cache"><span class="header-section-number">6.1</span> Setting up the cache</a></li>
+  <li><a href="#using-the-cache" id="toc-using-the-cache" class="nav-link" data-scroll-target="#using-the-cache"><span class="header-section-number">6.2</span> Using the cache</a></li>
+  <li><a href="#cache-invalidation" id="toc-cache-invalidation" class="nav-link" data-scroll-target="#cache-invalidation"><span class="header-section-number">6.3</span> Cache invalidation</a></li>
+  <li><a href="#listing-all-names-in-cache" id="toc-listing-all-names-in-cache" class="nav-link" data-scroll-target="#listing-all-names-in-cache"><span class="header-section-number">6.4</span> Listing all names in cache</a></li>
+  <li><a href="#changing-names" id="toc-changing-names" class="nav-link" data-scroll-target="#changing-names"><span class="header-section-number">6.5</span> Changing names</a></li>
+  <li><a href="#namespaces" id="toc-namespaces" class="nav-link" data-scroll-target="#namespaces"><span class="header-section-number">6.6</span> Namespaces</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cache.html">Other</a></li><li class="breadcrumb-item"><a href="./cache.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Caching</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cache.html">Other</a></li><li class="breadcrumb-item"><a href="./cache.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Caching</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Caching</span></h1>
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Caching</span></h1>
 </div>
 
 
@@ -295,8 +301,8 @@ div.csl-indent {
 
 <p>Some tasks of an analysis take a long time to complete, e.g., multiple imputation or simulation studies. Therefore, running our code from top to bottom can take a long time and unnecessarily repeates some of these steps. “Caching” is a solution to this problem, as it saves the output of said time-intensive tasks and loads them instead of rerunning the code.</p>
 <p>We use package <code>storr</code> for caching. <span class="citation" data-cites="storr">(<a href="references.html#ref-storr" role="doc-biblioref">FitzJohn 2025</a>)</span> We will use a <code>rds</code> cache, which saves cached objects as <code>rds</code> files in a specified folder.</p>
-<section id="setting-up-the-cache" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="setting-up-the-cache"><span class="header-section-number">5.1</span> Setting up the cache</h2>
+<section id="setting-up-the-cache" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="setting-up-the-cache"><span class="header-section-number">6.1</span> Setting up the cache</h2>
 <p>First, we need to initialise the cache. Since we use a <code>rds</code> cache, we need to create a subfolder in our project folder, called “Cache”.</p>
 <p>Next, we need to include code in our initialisation script, i.e., the script that runs at the very beginning and loads packages, sets options, etc.</p>
 <div class="cell">
@@ -304,8 +310,8 @@ div.csl-indent {
 </div>
 <p>Loading <code>storr</code> with <code>library()</code> is not necessary because this is the only time we call any function that needs <code>storr::</code> to be specified. From now on, we interact with the <code>R6</code> object that we called <code>cache</code>, which knows its methods without spcifying <code>storr::</code>. If the cache already exists, the line above “creates the connection”.</p>
 </section>
-<section id="using-the-cache" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="using-the-cache"><span class="header-section-number">5.2</span> Using the cache</h2>
+<section id="using-the-cache" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="using-the-cache"><span class="header-section-number">6.2</span> Using the cache</h2>
 <p>The basic methods of the <code>cache</code> object are:</p>
 <ul>
 <li><code>set</code> for saving objects</li>
@@ -324,8 +330,8 @@ div.csl-indent {
 </div>
 <p>(<code>object</code> and <code>name</code> can also be the same.)</p>
 </section>
-<section id="cache-invalidation" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="cache-invalidation"><span class="header-section-number">5.3</span> Cache invalidation</h2>
+<section id="cache-invalidation" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="cache-invalidation"><span class="header-section-number">6.3</span> Cache invalidation</h2>
 <p>Sometimes, the cached object needs to be created again, even though it has been cached before, e.g., because the underlying data changed. Before the new object can be cached, the old one needs to be invalidated. In <code>storr</code>, you can invalidate cached objects by using method <code>del()</code>. <code>del()</code> deletes the pointer to the saved object, so it cannot be found by that name anymore. However, the <code>rds</code> file is still available via its hash. To also delete the object, run the garbage collector using method <code>gc()</code>. It removes all <code>rds</code> files without a name in the cache.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Delete pointer, i.e., name</span></span>
@@ -335,15 +341,15 @@ div.csl-indent {
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>cache<span class="sc">$</span><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="listing-all-names-in-cache" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="listing-all-names-in-cache"><span class="header-section-number">5.4</span> Listing all names in cache</h2>
+<section id="listing-all-names-in-cache" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="listing-all-names-in-cache"><span class="header-section-number">6.4</span> Listing all names in cache</h2>
 <p>You can list all names in the cache with method <code>list()</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cache<span class="sc">$</span><span class="fu">list</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="changing-names" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="changing-names"><span class="header-section-number">5.5</span> Changing names</h2>
+<section id="changing-names" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="changing-names"><span class="header-section-number">6.5</span> Changing names</h2>
 <p>You can change the name of a cached object by using method <code>duplicate()</code>. It creates another pointer to the same object, i.e., the <code>rds</code> file does not change and is not copied. Afterwards, the old name can be deleted.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Duplicate the pointer</span></span>
@@ -353,8 +359,8 @@ div.csl-indent {
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>cache<span class="sc">$</span><span class="fu">del</span>(<span class="st">"old_name"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="namespaces" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="namespaces"><span class="header-section-number">5.6</span> Namespaces</h2>
+<section id="namespaces" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="namespaces"><span class="header-section-number">6.6</span> Namespaces</h2>
 <p>When caching many objects, it might be useful to structure the names into subfolder, e.g., putting all multiply imputed datasets into subfolder “mi”. These subfolders are called “namespaces”. You can use them by specifying the corresponding namespace in addition to the name of the object. Please refer to the <code>storr</code> documentation for details. When not using namespaces, all objects are saved in the default namespace, which is called <code>objects</code>.</p>
 
 
@@ -788,13 +794,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./hmm.html" class="pagination-link" aria-label="Hidden Markov Models">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Hidden Markov Models</span></span>
+      <a href="./measurement-error.html" class="pagination-link" aria-label="Measurement Error">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Error</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./ggplot-miscellaneous.html" class="pagination-link" aria-label="ggplot: Miscellaneous">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">ggplot: Miscellaneous</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">ggplot: Miscellaneous</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

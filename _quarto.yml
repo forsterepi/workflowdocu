@@ -17,6 +17,7 @@ book:
       chapters: 
         - lca.qmd
         - hmm.qmd
+        - measurement-error.qmd
     - part: "Other"
       chapters: 
         - cache.qmd

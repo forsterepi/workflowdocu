@@ -2,4 +2,6 @@
 
 This book describes my workflows.
 
-It is accompanied by the unpublished `supfuns` package.
+The unpublished `supfuns` package contains useful functions.
+
+The unpublished `epictemplate` package contains a project template.

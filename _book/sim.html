@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -69,6 +103,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -167,6 +230,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Hidden Markov Models</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./measurement-error.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Measurement Error</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -181,13 +250,13 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./cache.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Caching</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Caching</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ggplot-miscellaneous.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">ggplot: Miscellaneous</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">ggplot: Miscellaneous</span></span></a>
   </div>
 </li>
       </ul>
@@ -203,8 +272,21 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#creating-simulation-modules-in-simcausal" id="toc-creating-simulation-modules-in-simcausal" class="nav-link active" data-scroll-target="#creating-simulation-modules-in-simcausal"><span class="header-section-number">1.1</span> Creating simulation modules in <code>simcausal</code></a></li>
+  <li><a href="#running-simulation-in-simchef" id="toc-running-simulation-in-simchef" class="nav-link" data-scroll-target="#running-simulation-in-simchef"><span class="header-section-number">1.2</span> Running simulation in <code>simChef</code></a></li>
+  <li><a href="#documenting-simulations-in-quarto" id="toc-documenting-simulations-in-quarto" class="nav-link" data-scroll-target="#documenting-simulations-in-quarto"><span class="header-section-number">1.3</span> Documenting simulations in <code>Quarto</code></a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><span class="header-section-number">1.4</span> </a>
+  <ul class="collapse">
+  <li><a href="#template" id="toc-template" class="nav-link" data-scroll-target="#template"><span class="header-section-number">1.4.1</span> Template</a></li>
+  <li><a href="#module-number-name" id="toc-module-number-name" class="nav-link" data-scroll-target="#module-number-name"><span class="header-section-number">1.4.2</span> Module &lt;number&gt;: &lt;name&gt;</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -228,9 +310,249 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>x</p>
+<p>intro, workflow, packages</p>
+<section id="creating-simulation-modules-in-simcausal" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="creating-simulation-modules-in-simcausal"><span class="header-section-number">1.1</span> Creating simulation modules in <code>simcausal</code></h2>
+</section>
+<section id="running-simulation-in-simchef" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="running-simulation-in-simchef"><span class="header-section-number">1.2</span> Running simulation in <code>simChef</code></h2>
+</section>
+<section id="documenting-simulations-in-quarto" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="documenting-simulations-in-quarto"><span class="header-section-number">1.3</span> Documenting simulations in <code>Quarto</code></h2>
+</section>
+<section id="section" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="section"><span class="header-section-number">1.4</span> </h2>
+<section id="template" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="template"><span class="header-section-number">1.4.1</span> Template</h3>
+</section>
+<section id="module-number-name" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="module-number-name"><span class="header-section-number">1.4.2</span> Module &lt;number&gt;: &lt;name&gt;</h3>
+<p>&lt;Short module description&gt;</p>
+<section id="assumptions" class="level4" data-number="1.4.2.1">
+<h4 data-number="1.4.2.1" class="anchored" data-anchor-id="assumptions"><span class="header-section-number">1.4.2.1</span> Assumptions</h4>
+<div id="tbl-module-asmp" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-module-asmp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.1: Assumptions of simulation module “&lt;name&gt;”
+</figcaption>
+<div aria-describedby="tbl-module-asmp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Assumption</th>
+<th>Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&lt;Assumption 1&gt;</td>
+<td>&lt;Justification 1&gt;</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="variables" class="level4" data-number="1.4.2.2">
+<h4 data-number="1.4.2.2" class="anchored" data-anchor-id="variables"><span class="header-section-number">1.4.2.2</span> Variables</h4>
+<div id="tbl-module-var" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-module-var-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.2: Variables of simulation module “&lt;name&gt;”
+</figcaption>
+<div aria-describedby="tbl-module-var-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&lt;Variable 1 using <span class="math inline">\(Inline Math\)</span>&gt;</td>
+<td>&lt;Variable description 1&gt;</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="parameters" class="level4" data-number="1.4.2.3">
+<h4 data-number="1.4.2.3" class="anchored" data-anchor-id="parameters"><span class="header-section-number">1.4.2.3</span> Parameters</h4>
+<div id="tbl-module-par" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-module-par-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.3: Parameters of simulation module “&lt;name&gt;”
+</figcaption>
+<div aria-describedby="tbl-module-par-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&lt;Parameter 1 using <span class="math inline">\(Inline Math\)</span>&gt;</td>
+<td>&lt;Parameter description 1&gt;</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="technical-details" class="level4" data-number="1.4.2.4">
+<h4 data-number="1.4.2.4" class="anchored" data-anchor-id="technical-details"><span class="header-section-number">1.4.2.4</span> Technical details</h4>
+</section>
+<section id="equation-block" class="level4" data-number="1.4.2.5">
+<h4 data-number="1.4.2.5" class="anchored" data-anchor-id="equation-block"><span class="header-section-number">1.4.2.5</span> Equation block</h4>
+<ul>
+<li>The complete equation is inside double <code>$$</code>, i.e., double <code>$$</code> as both the first and the last line</li>
+<li>Use align to align all equations at <code>=</code> or <code>~</code>
+<ul>
+<li>Second line, i.e., directly after <code>$$</code>, is <code>\begin{align}</code></li>
+<li>Second to last line, i.e., directly before <code>$$</code>, is <code>\end{align}</code></li>
+<li>Add <code>&amp;</code> in front of the symbols to align, i.e., use <code>&amp;=</code> for <span class="math inline">\(=\)</span> and <code>&amp;\sim</code> for <span class="math inline">\(\sim\)</span></li>
+</ul></li>
+<li>Use <code>\text{some text}</code> to write <code>some text</code> in more of a text format than an equation format</li>
+<li>Use <code>_</code> for subscript and include the subcript in curly brackets if it is longer than 1 character, e.g.: <code>Y_{True}</code> or <code>p_X</code></li>
+<li>End your equations with <code>\\</code> to start a new equation in a new line</li>
+<li>Cases
+<ul>
+<li>Start with <code>\begin{cases}</code> and end with <code>\end{cases}</code></li>
+<li>To specify, in which cases a equation is applied, end all equations in the cases block with <code>, &amp;\quad\text{for} x = 1</code></li>
+<li><code>&amp;</code> in front of <code>\quad</code> is used for aligning them</li>
+</ul></li>
+</ul>
+</section>
+<section id="stan" class="level4" data-number="1.4.2.6">
+<h4 data-number="1.4.2.6" class="anchored" data-anchor-id="stan"><span class="header-section-number">1.4.2.6</span> Stan</h4>
+<ol type="1">
+<li>Create an R code block</li>
+<li>Use options:
+<ol type="a">
+<li><code>#| class-output: stan</code></li>
+<li><code>#| echo: false</code></li>
+</ol></li>
+<li>Input code
+<ol type="a">
+<li>For a stan file use: <code>cat(readLines("Stan/file_name.stan"), sep = "\n")</code></li>
+<li>For a few lines use: <code>cat(c("Line 1", "Line 2", "..."), sep = "\n")</code></li>
+<li>Example for b.: <code>cat(c("// Priors", "a ~ normal(-3.4, 0.6);", "b ~ normal(0, 0.7);"), sep = "\n")</code></li>
+</ol></li>
+</ol>
+</section>
+<section id="graphs" class="level4" data-number="1.4.2.7">
+<h4 data-number="1.4.2.7" class="anchored" data-anchor-id="graphs"><span class="header-section-number">1.4.2.7</span> Graphs</h4>
+<ol type="1">
+<li>Type <code>/dot</code> until <code>GraphViz Code Chunk</code> is suggested, then click <code>tab</code></li>
+<li>YAML options in the codeblock start with <code>//|</code>
+<ol type="a">
+<li><code>//| label: fig-graph-module&lt;number&gt;</code></li>
+<li><code>//| fig-cap: 'Graph of simulation module "x" (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)'</code></li>
+<li><code>//| fig-height: 2</code>; fig-height is often needed to delete too much white space above and below the graph. Large graphs do not need it. Sometimes, other values give better results, e.g., 3.</li>
+</ol></li>
+<li>Start with <code>digraph</code> keyword, graph name, e.g., <code>sim_mod_1</code>, and curly brackets: <code>digraph sim_mod_number {}</code>; All code goes inside the curly brackets.</li>
+<li>Options:
+<ol type="a">
+<li><code>rankdir = LR</code></li>
+<li><code>bgcolor = "transparent"</code></li>
+</ol></li>
+<li>Variable specification: Start with the name and add options in brackets <code>node_name []</code>
+<ol type="a">
+<li><code>label =</code>; Put label inside <code>&lt; &gt;</code>; put subscript inside <code>&lt;SUB&gt; &lt;/SUB&gt;</code></li>
+<li><code>shape =</code>; no shape for variables (ellipses), <code>box</code> for variables from other modules, <code>diamond</code> for parameters</li>
+</ol></li>
+<li>Edges: <code>node_name1 -&gt; node_name2</code></li>
+</ol>
+<div class="cell" data-fig-height="2" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode dot code-with-copy"><code class="sourceCode dot"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">digraph</span> <span class="va">m_a</span> <span class="ot">{</span><span class="co">   </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="at">rankdir</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">LR</span><span class="co">   </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="at">bgcolor</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="st">"transparent"</span><span class="co">      </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">  </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="va">from_other_module</span><span class="co"> </span><span class="ot">[</span><span class="at">label</span><span class="co"> </span><span class="ot">=</span><span class="co"> &lt;</span><span class="va">From</span><span class="co"> </span><span class="va">other</span><span class="co">&lt;</span><span class="va">SUB</span><span class="co">&gt;</span><span class="va">module</span><span class="co">&lt;/</span><span class="va">SUB</span><span class="co">&gt;&gt;, </span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">box</span><span class="ot">]</span><span class="co">      </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="va">var</span><span class="co"> </span><span class="ot">[</span><span class="at">label</span><span class="co"> </span><span class="ot">=</span><span class="co"> &lt;</span><span class="va">Var</span><span class="co">&lt;</span><span class="va">SUB</span><span class="co">&gt;</span><span class="dv">1</span><span class="co">&lt;/</span><span class="va">SUB</span><span class="co">&gt;&gt;</span><span class="ot">]</span><span class="co">      </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="va">par</span><span class="co"> </span><span class="ot">[</span><span class="at">label</span><span class="co"> </span><span class="ot">=</span><span class="co"> &lt;</span><span class="va">A</span><span class="co"> </span><span class="va">parameter</span><span class="co">&gt;, </span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">diamond</span><span class="ot">]</span><span class="co">      </span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="va">from_other_module</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="va">var</span><span class="co">   </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">  </span><span class="va">par</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="va">var</span><span class="co"> </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ot">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-graph-module1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-graph-module1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<svg width="672" height="192" viewbox="0.00 0.00 271.63 98.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 94)">
+<title>m_a</title>
+<!-- from_other_module -->
+<g id="node1" class="node">
+<title>from_other_module</title>
+<polygon fill="none" stroke="black" points="143.57,-90 23.38,-90 23.38,-54 143.57,-54 143.57,-90"></polygon>
+<text text-anchor="start" x="31.17" y="-68.8" font-family="Times,serif" font-size="14.00">From other</text>
+<text text-anchor="start" x="93.78" y="-68.8" font-family="Times,serif" baseline-shift="sub" font-size="14.00">module</text>
+</g>
+<!-- var -->
+<g id="node2" class="node">
+<title>var</title>
+<ellipse fill="none" stroke="black" cx="233.29" cy="-45" rx="30.18" ry="18"></ellipse>
+<text text-anchor="start" x="219.29" y="-41.8" font-family="Times,serif" font-size="14.00">Var</text>
+<text text-anchor="start" x="240.28" y="-41.8" font-family="Times,serif" baseline-shift="sub" font-size="14.00">1</text>
+</g>
+<!-- from_other_module&#45;&gt;var -->
+<g id="edge1" class="edge">
+<title>from_other_module-&gt;var</title>
+<path fill="none" stroke="black" d="M143.74,-61.17C160.58,-58.1 178.47,-54.83 193.73,-52.04"></path>
+<polygon fill="black" stroke="black" points="194.62,-55.44 203.83,-50.2 193.37,-48.55 194.62,-55.44"></polygon>
+</g>
+<!-- par -->
+<g id="node3" class="node">
+<title>par</title>
+<polygon fill="none" stroke="black" points="83.47,-36 0.03,-18 83.47,0 166.92,-18 83.47,-36"></polygon>
+<text text-anchor="start" x="48.69" y="-13.8" font-family="Times,serif" font-size="14.00">A parameter</text>
+</g>
+<!-- par&#45;&gt;var -->
+<g id="edge2" class="edge">
+<title>par-&gt;var</title>
+<path fill="none" stroke="black" d="M129.22,-26.17C149.92,-29.95 174.24,-34.4 194.07,-38.02"></path>
+<polygon fill="black" stroke="black" points="193.51,-41.47 203.98,-39.83 194.77,-34.59 193.51,-41.47"></polygon>
+</g>
+</g>
+</svg>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-graph-module1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1: Graph of simulation module “x” (Ellipse: Variable, Diamond: Parameter, Box: Variable from other module)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="code" class="level4" data-number="1.4.2.8">
+<h4 data-number="1.4.2.8" class="anchored" data-anchor-id="code"><span class="header-section-number">1.4.2.8</span> Code</h4>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

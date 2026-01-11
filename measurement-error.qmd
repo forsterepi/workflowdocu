@@ -1,0 +1,284 @@
+---
+bibliography: references.bib
+---
+
+# Measurement Error
+
+## Binary outcome
+
+Measurement error in a binary outcome can be addressed when having estimates of sensitivity and specificity. The easiest correction method is for non-differential error, which is also assumed to be independent of other measurement errors.
+
+[@carroll2006] (pp. 346-347) describe a correction method via maximum likelihood or Bayesian methods using the following equations:
+
+In the following formulas, $\mathbf{Y}$ is the true binary outcome with $\mathbf{Y}=1$ meaning that a participant truely has the outcome, while $\mathbf{Y}=0$ means that the individual does truely note have the outcome. In contrast, $\mathbf{S}$ is the measured and potentially misclassified binary outcome, with $\mathbf{S}=1$ meaning that, based on the measurement, the participant has the outcome, while $\mathbf{S}=0$ means that, based on the measurement, the participant does not have the outcome. In addition, $\mathbf{Z}$ is the set of predictor variables.
+
+Measurement error is parameterised by sensitivity ($\pi_1$) and specificity ($\pi_0$), which are defined as follows:
+
+$$
+\begin{align}
+\pi_1 &= pr(\mathbf{S}=1\,|\,\mathbf{Y}=1,\,\mathbf{Z})\\
+\pi_0 &= pr(\mathbf{S}=0\,|\,\mathbf{Y}=0,\,\mathbf{Z})
+\end{align}
+$$
+
+If we had the true binary outcome, we would use a logistic model for analysis, described as follow:
+
+$$
+pr(\mathbf{Y}=1\,|\,\mathbf{Z})=H(\beta_0+\beta_z^t\,\mathbf{Z})
+$$
+
+However, when using $\mathbf{S}$ instead of $\mathbf{Y}$, the probability model needs to be adjusted as follows:
+
+$$
+pr(\mathbf{S}=1\,|\,\mathbf{Z})=(1-\pi_0)+(\pi_1+\pi_0-1)\,H(\beta_0+\beta_z^t\,\mathbf{Z})
+$$
+
+The authors describe the loglikelihood function to be maximised as:
+
+$$
+\sum_{i=1}^n[\mathbf{S}_i\,log\{ \Psi(\mathbf{S}, \mathbf{Z}, \pi_0, \pi_1, \beta_0, \beta_z)\}+(1-\mathbf{S}_i)\,log\{1-\Psi(\mathbf{S},\mathbf{Z},\pi_0,\pi_1,\beta_0,\beta_z)\}]
+$$
+
+with $\Psi(\mathbf{S},\mathbf{Z},\pi_0,\pi_1,\beta_0,\beta_z)$ equal to $pr(\mathbf{S}=1\,|\,\mathbf{Z})$. Let's therefore simplify to:
+
+$$
+\sum_{i=1}^n[\mathbf{S}_i\,log\{pr(\mathbf{S}=1\,|\,\mathbf{Z})\}+(1-\mathbf{S}_i)\,log\{1-pr(\mathbf{S}=1\,|\,\mathbf{Z})\}]
+$$
+
+### Maximum likelihood
+
+One approach of conducting the correction in R is to use `optim()` to maximise the likelihood, or, to be more precise, to minimise the negative loglikelihood.
+
+First, a function needs to be created that is calculating the negative loglikelihood (`nll`) based on parameter values (argument `pars`), data (argument `data`), and additional inputs, in our case sensitivity (argument `se`) and specificity (argument `sp`). The following code assumes a single predictor `x`.
+
+```{r}
+#| eval: false
+nll <- function(pars, data, se, sp) {
+    # Parameters
+    a <- pars[1]
+    b <- pars[2]
+
+    # Calculate p
+    p <- (1 - sp) + (se + sp - 1) * plogis(a + b * data$x)
+
+    # Calculate likelihood
+    ll <- data$yObs * log(p) + (1 - data$yObs) * log(1 - p)
+
+    # Return
+    -sum(ll)
+  }
+```
+
+First, `nll` extracts the two parameters `a` and `b` from the argument `pars`. `a` and `b` are the regression coefficients that we want to estimate. Next, `p` is calculated, which coresponds to $pr(\mathbf{S}=1\,|\,\mathbf{Z})$. `plogis()` transforms the linear predictor on the log-odds scale to a probability. Next, the likelihood for each observation is calculated based on the formula above, with `yObs`, the observed outcome of a certain individual, refering to $\mathbf{S}_i$. `ll` is a vector that contains the contribution to the total likelihood from each observation. Finally, `-sum(ll)` calculates the total negative loglikelihood that is then minimised by the `optim()` function. Again, the negative loglikelihood is used because `optim()` does minimisation instead of maximisation and minimising the negative loglikelihood is similar to maximising the (positive) loglikelihood.
+
+```{r}
+#| eval: false
+mle <- optim(
+  par = c(a = -3, b = 0), fn = nll,
+  data = df, se = 0.72, sp = 0.85,
+  hessian = TRUE
+)
+  
+std_error <- mle$hessian %>%
+  solve() %>%
+  diag() %>%
+  sqrt()
+```
+
+When using `optim()`, we need to provide a named vector of starting values for the parameters in argument `par`, the `nll` function in argument `fn`, the data in argument `data`, as well as values for the additional arguments of function `nll`, in our case values for sensitivity and specificity. We also set `hessian = TRUE`, because we use it to calculate the parameters' standard errors.
+
+### Bayesian approach
+
+One problem with the maximum likelihood approach is that we can only provide a point estimate of sensitivity and specificity when calling `optim()` and therefore cannot include any uncertainty. However, a Bayesian approach enables us to do so. The basic idea is that we include sensitivity and specificity as parameters in the Bayesian model and provide informative priors that correspond to our uncertainty. Since there is no information to update our priors for sensitivity and specificity, their posteriors are identical to their priors and the final samples reflect this uncertainty as well.
+
+```{r}
+#| class-output: stan
+#| echo: false
+
+cat(readLines("R/outc_miscl.stan"), sep = "\n")
+```
+
+The above Stan code similarly assumes a single predictor `x`. As described above, sensitivity `se` and specificity `sp` are included as parameters instead of data. In the example above, priors for regression parameters `a` and `b` are only weakly informative, but more informative priors are possible. From previous simulations we know that more informative priors might both improve precision or additionally bias the results. A bad prior for the intercept `a` might bias the estimate for `b` even if `b`'s prior corresponds to the true value. Therefore, conduct detailled simulations when applying any measurement error correction. Priors of sensitivity and specificity correspond encode the 95% confidence interval of their estimated values. In the example above, a meta-analysis reports estimates for sensitivity and specificity with 95% confidence intervals of 0.67-0.77 and 0.83-0.87, respectively. As priors, the beta distributions, for which the 0.025 and 0.975 quantiles fall together with the lower and upper bound of the confidence interval, are selected. One possibility to find the corresponding distributions is the [Probability Distribution Explorer](https://distribution-explorer.github.io/). In the likelihood of the Stan model, the probability model for $pr(\mathbf{S}=1\,|\,\mathbf{Z})$ is used. As the result is a probability, distribution `bernoulli` instead of `bernoulli_logit` must be used. Function `inv_logit()` tranforms log-odds to probabilities, similar to `plogis()` above. Finally, the odds ratio is calculated in the generated quantities block.
+
+## Binary outcome - Simulation
+
+For conducting simulations, the following simulation modules can be used.
+
+### Module 1: Outcome misclassification without predictor {#sec-sim-mod-1}
+
+This module describes the simplest test of adjusting for outcome misclassification of a binary outcome variable. The true outcome values are produces from a fixed probability, which we want to recover in the analysis. There are no predictors implemented. The observed values are created based on fixed values of sensitivity and specificity.
+
+#### Assumptions
+
+| Assumption                                | Justification    |
+|-------------------------------------------|------------------|
+| Non-differential misclassification        | \<\<evaluate\>\> |
+| Known sensitivity and specificity         | \<\<evaluate\>\> |
+| No predictors of true outcome probability | \<\<evaluate\>\> |
+
+: Assumptions of simulation module "Outcome misclassification without predictor" {#tbl-me-sim-module1-asmp}
+
+#### Variables
+
+| Variable   | Description                               |
+|------------|-------------------------------------------|
+| $Y_{True}$ | The true values of outcome variable Y     |
+| $Y_{Obs}$  | The observed values of outcome variable Y |
+
+: Variables of simulation module "Outcome misclassification without predictor" {#tbl-me-sim-module1-var}
+
+#### Parameters
+
+| Parameter | Description |
+|------------------|------------------------------------------------------|
+| $p_{True}$ | Probability of having the true outcome $Y_{True}$ |
+| $SE$ | Probability of observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is present (Sensitivity) |
+| $SP$ | Probability of not observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is absent (Specificity) |
+
+: Parameters of simulation module "Outcome misclassification without predictor" {#tbl-me-sim-module1-par}
+
+#### Technical details
+
+$$
+\begin{align}
+Y_{True} &\sim Bernoulli(p_{True}) \\
+Y_{Obs} &\sim
+\begin{cases}
+Bernoulli(SE), &\quad\text{for}\ Y_{True} = 1 \\
+Bernoulli(1 - SP), &\quad\text{for}\ Y_{True} = 0
+\end{cases}
+\end{align}
+$$
+
+```{dot}
+//| label: fig-graph-me-sim-module1
+//| fig-cap: 'Graph of simulation module "Outcome misclassification without predictor" (Ellipse: Variable, Diamond: Parameter)'
+//| fig-height: 2
+digraph sim_mod_gr_1 {
+  rankdir = LR
+  bgcolor = "transparent"
+  
+  y_true [label = <Y<SUB>True</SUB>>]
+  y_obs [label = <Y<SUB>Obs</SUB>>]
+  
+  p_true [label = <p<SUB>True</SUB>>, shape = diamond]
+  se [label = SE, shape = diamond]
+  sp [label = SP, shape = diamond]
+  
+  p_true -> y_true
+  y_true -> y_obs
+  se -> y_obs
+  sp -> y_obs
+}
+```
+
+#### Code
+
+```{r}
+#| code-fold: true
+#| code-summary: "Create module 'Outcome misclassification without predictor' in simcausal"
+#| file: R/sim_model_outc_miscl_1.R
+#| eval: false
+```
+
+### Module 2: Outcome misclassification with predictor {#sec-sim-mod-2}
+
+This module introduces a single binary predictor of the binary misclassified outcome. Our goal is to recover the effect estimate of this predictor.
+
+#### Assumptions
+
+| Assumption | Justification |
+|----------------------------------------------|-------------------------|
+| The probability of the outcome is influenced by a single binary predictor. | \<\<evaluate\>\> |
+| Non-differential misclassification | \<\<evaluate\>\> |
+
+: Assumptions of simulation module "Outcome misclassification with predictor" {#tbl-me-sim-module1-asmp}
+
+#### Variables
+
+| Variable   | Description                                                  |
+|----------------|--------------------------------------------------------|
+| $X$        | A binary predictor variable                                  |
+| $p_{True}$ | Individual probability of having the true outcome $Y_{True}$ |
+| $Y_{True}$ | The true values of outcome variable Y                        |
+| $Y_{Obs}$  | The observed values of outcome variable Y                    |
+
+: Variables of simulation module "Outcome misclassification with predictor" {#tbl-me-sim-module1-var}
+
+#### Parameters
+
+| Parameter | Description |
+|-----------------|------------------------------------------------------|
+| $p_X$ | Probability of having the binary predictor variable |
+| $p(\alpha)$ | Probability of having the true outcome $Y_{True}$ for individuals without the predictor |
+| $OR_X$ | Ratio of odds of the true outcome $Y_{True}$ for individuals with the predictor compared to individuals without the predictor |
+| $SE$ | Probability of observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is present (Sensitivity) |
+| $SP$ | Probability of not observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is absent (Specificity) |
+
+: Parameters of simulation module "Outcome misclassification with predictor" {#tbl-me-sim-module1-par}
+
+#### Technical details
+
+$$ 
+\begin{align}
+X &\sim Bernoulli(p_X) \\
+p_{True} &= inv.logit(logit(p(\alpha)) + log(OR_X) * X) \\
+Y_{True} &\sim Bernoulli(p_{True}) \\
+Y_{Obs} &\sim
+\begin{cases}
+Bernoulli(SE), &\quad\text{for}\ Y_{True} = 1 \\
+Bernoulli(1 - SP), &\quad\text{for}\ Y_{True} = 0
+\end{cases}
+\end{align} 
+$$
+
+```{dot}
+//| label: fig-graph-me-sim-module2
+//| fig-cap: 'Graph of simulation module "Outcome misclassification with predictor" (Ellipse: Variable, Diamond: Parameter)'
+//| fig-height: 2 
+
+digraph sim_mod_gr_2 {   
+  rankdir = LR   
+  bgcolor = "transparent"      
+  
+  X
+  p_true [label = <p<SUB>True</SUB>>]
+  y_true [label = <Y<SUB>True</SUB>>]
+  y_obs [label = <Y<SUB>Obs</SUB>>] 
+  
+  p_x [label = <p<SUB>X</SUB>>, shape = diamond]
+  p_alpha [label = <p(&alpha;)>, shape = diamond, height = 0.6]
+  or_x [label = <OR<SUB>X</SUB>>, shape = diamond]
+  se [label = SE, shape = diamond]
+  sp [label = SP, shape = diamond]
+  
+  p_x -> X
+  X -> p_true
+  p_alpha -> p_true
+  or_x -> p_true
+  p_true -> y_true
+  y_true -> y_obs
+  se -> y_obs
+  sp -> y_obs
+}
+```
+
+#### Code
+
+```{r}
+#| code-fold: true
+#| code-summary: "Create module 'Outcome misclassification with predictor' in simcausal"
+#| file: R/sim_model_outc_miscl_2.R
+#| eval: false
+```
+
+### Experiment
+
+A potantial simulation experiment might look as follows.
+
+```{r}
+#| code-fold: true
+#| code-summary: Potential simulation experiment
+#| file: R/sim_outc_miscl.R
+#| eval: false
+```
