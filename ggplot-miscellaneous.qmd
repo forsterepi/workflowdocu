@@ -7,6 +7,8 @@ Imagine you want to label a certain value in a distribution and you want this la
 The solution is to first create the plot without the label, extract its size, and use it to annotate the label at the correct position.
 
 ```{r}
+#| warning: false
+
 # Load and attach ggplot2
 library(ggplot2)
 
@@ -43,6 +45,8 @@ p +
 This section provides some patterns for using package `patchwork` [@patchwork] for combining ggplots.
 
 ```{r}
+#| warning: false
+
 library(patchwork)
 ```
 
@@ -86,6 +90,7 @@ Sometimes using the patchwork operators (`+`, `|`, `/`) does not work, e.g., bec
 
 ```{r}
 #| message: false
+#| warning: false
 
 library(tidyverse)
 

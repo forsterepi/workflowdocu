@@ -1,3 +1,164 @@
 # Hidden Markov Models
 
-x
+We fit HMMs with R package `hmmTMB`. [@hmmTMB]
+
+## Data requirements by `hmmTMB`
+
+-   Data must be in long format with one visit per row
+-   Data must be provided as a data.frame
+-   Observed variables, i.e., the ones caused by the latent state, as well as covariates are columns in this data.frame
+-   The variable containing the participant ID needs to be called `ID`
+-   Known states of the (usually hidden) latent state variable, e.g., based on value patterns of observed variables for which there is very little uncertainty in latent state determination, must be provided in a variable called `state`, with integer values from `1` to the number of latent states for known states, and `NA` for hidden states that need to be estimated by the model
+-   Missing values in observed variables, i.e., the ones caused by the latent state, are allowed but must be `NA`
+-   Missing values in covariates are not allowed. If there are `NA`s in covariates, `hmmTMB` will use insufficient methods to fill them in. Therefore, missings in covariates must be multiply imputed before fitting the model.
+-   Categorical predictors should be factors
+-   There is the option to include a variable that defines time. It needs to be called `time`. Currently, I am not 100% sure what the inclusion of a `time` variable actually changes.
+
+## Workflow for fitting HMM models
+
+The current `supfuns` functions still need to be generalised. Currently, they are focused on the asthma transition project, which among other things, assumes 2 latent states.
+
+HMMs are estimated with function `run_hmm()`. It can show a `progressr` progress bar, if it is activated first.
+
+```{r}
+#| eval: false
+
+progressr::handlers(global = TRUE)
+progressr::handlers("cli")
+```
+
+The first step is to specify the set of observed variables, i.e., the ones caused by the latent state.
+
+```{r}
+#| eval: false
+
+obsvars <- c("obs1", "obs2")
+```
+
+Then, the model is fit with `run_hmm()`. For parallelised calculation of the 100 models with different random starting values, set a `multisession` plan with the `future` package. Stop parallelisation by setting a `sequential` plan.
+
+```{r}
+#| eval: false
+
+future::plan(multisession, workers = 5)
+
+m <- run_hmm(
+  data = d,
+  obsvars = obsvars,
+  initial_state = "shared",
+  formula = ~ age_pred * female + vab1,
+  nrep = 100
+)
+
+future::plan(sequential)
+```
+
+The ouput of `run_hmm()` contains two elements: the model itself as well as its identification, i.e., the percentage of random starting values leading to the model with the best likelihood. If a considerable percentage of random starting values led to the best solution, we can be reasonably sure that the global maximum likelihood solution has been found.
+
+```{r}
+#| eval: false
+
+# Extract model
+hmm <- m$hmm
+
+# Identification
+m$ident
+```
+
+With `plot_hmm_obs()`, we can plot the distribution of observed variables by latent state. This is important for interpretation of latent states.
+
+```{r}
+#| eval: false
+
+plot_hmm_obs(hmm)
+```
+
+Effect estimates of transition predictors can be extracted with `or_hmm()`.
+
+```{r}
+#| eval: false
+
+or_hmm(hmm)
+```
+
+Predicted transition probabilities by a certain predictor can be plotted with `plot_hmm_predict()`.
+
+```{r}
+#| eval: false
+
+plot_hmm_predict(hmm, var = "vab1")
+```
+
+Finally, the number of transitions can be extracted with `n_trans()`. It will give the number of remissions, that number of relapses, as well as the transition pattern by individual, which is the number of remission and relapse events. Again, the definition of remission and relapse currently only makes sense in the context of the asthma transition analysis.
+
+## Misc
+
+### Argument `t` in `hmmTMB` functions
+
+The following functions have a `t` argument:
+
+-   `MarkovChain$tpm()`
+-   `Observation$par()`
+
+These functions are called by other functions:
+
+-   `HMM$par()` calls `MarkovChain$tpm()` & `Observation$par()`
+-   `HMM$predict()` calls `MarkovChain$tpm()` & `Observation$par()`
+
+```{r}
+#| eval: false
+
+# Both lines give identical results
+hmm$hid()$tpm(t = 1)
+hmm$predict("tpm", t = 1)
+
+# Both lines give identical results
+hmm$hid()$tpm(t = "all")
+hmm$predict("tpm", t = "all")
+
+# Both lines give identical results
+hmm$obs()$par(t = 2)
+hmm$predict("obspar", t = 2)
+```
+
+-   `HMM$print_obspar()` calls `HMM$par()`
+-   `HMM$print_tpm()` calls `HMM$par()`
+-   `Observation$par_alt()` calls `HMM$par()`
+
+The following behaviour of `t` has been confirmed in testing:
+
+-   `t = "all"` gives `nrow(data)` tpm/obspar outputs, i.e., one result per participant in the data used to fit the HMM
+-   Predicting (`HMM$predict()`) with `newdata` ignores `t` and produces one prediction for each line in `newdata`
+
+```{r}
+#| eval: false
+
+# All three lines give identical results
+hmm$predict("tpm", newdata = newdata, t = 1)
+hmm$predict("tpm", newdata = newdata, t = 14)
+hmm$predict("tpm", newdata = newdata, t = "all")
+```
+
+-   tpm/obspar with `t = x`, e.g., `t = 2`, refers to the predicted values for row `x`, e.g., row `2`
+-   Values for `predict(t = "all")` for individuals with the same predictors are identical
+
+### Potential (untested) workflow for pooling estimates from multiply imputed data
+
+The following untested plan is based on information from the `hmmTMB` documentation.
+
+1.  Observation probabilities
+    a.  Pool intercepts on logit scale with: `mice::pool.scalar(rule = "rubin1987", n = ?, k = ?)`
+    b.  Calculate CI on logit scale
+    c.  Tranform to probability scale
+    d.  Alternative: similarly to transition probabilities
+2.  Transition probabilities
+    a.  Pool parameters (on logit scale) with: `mice::pool.scalar(rule = "rubin1987", n = ?, k = ?)`
+    b.  Calculate CI on logit scale and transform to Odds Ratio scale for predictor of interest
+    c.  Transform the newdata used in `hmm$predict()` to a design matrix with: `hmm$hid()$make_mat(data = hmm$obs()$data(), new_data = newdata)$X_fe`
+    d.  Matrix-multiply the design matrix with the pooled estimates and use it as argument `linpred` in `MarkovChain$tpm()`: `hmm$hid()$tpm(linpred = design_matrix %*% pooled_est, t = "all")` (Alternative: Process the result of the matrix multiplication directly.)
+    e.  The resulting probabilities are the MLEs (`geom_point()` / `geom_line()` in `plot_hmm_predict()`)
+    f.  Predict 1000 samples from the model in each of the 20 imputed datasets with: `hmm$predict("tpm", newdata = newdata, n_post = 1e3, return_post = TRUE)`
+    g.  Extract the posterior samples from each of the 20 imputed datasets, throw them together, and calculate 2.5% and 97.5% quantiles
+3.  State decodings
+    a.  Get Viterbi states in each of the 20 imputed datasets.
+    b.  Plot the proportion of being in state 2, instead of the locally decoded values in `geom_line()`
