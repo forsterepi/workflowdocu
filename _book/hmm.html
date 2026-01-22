@@ -20,7 +20,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -209,8 +263,24 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#data-requirements-by-hmmtmb" id="toc-data-requirements-by-hmmtmb" class="nav-link active" data-scroll-target="#data-requirements-by-hmmtmb"><span class="header-section-number">4.1</span> Data requirements by <code>hmmTMB</code></a></li>
+  <li><a href="#workflow-for-fitting-hmm-models" id="toc-workflow-for-fitting-hmm-models" class="nav-link" data-scroll-target="#workflow-for-fitting-hmm-models"><span class="header-section-number">4.2</span> Workflow for fitting HMM models</a>
+  <ul class="collapse">
+  <li><a href="#decisions" id="toc-decisions" class="nav-link" data-scroll-target="#decisions"><span class="header-section-number">4.2.1</span> Decisions</a></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow"><span class="header-section-number">4.2.2</span> Workflow</a></li>
+  </ul></li>
+  <li><a href="#supfuns-functions" id="toc-supfuns-functions" class="nav-link" data-scroll-target="#supfuns-functions"><span class="header-section-number">4.3</span> <code>Supfuns</code> functions</a></li>
+  <li><a href="#misc" id="toc-misc" class="nav-link" data-scroll-target="#misc"><span class="header-section-number">4.4</span> Misc</a>
+  <ul class="collapse">
+  <li><a href="#argument-t-in-hmmtmb-functions" id="toc-argument-t-in-hmmtmb-functions" class="nav-link" data-scroll-target="#argument-t-in-hmmtmb-functions"><span class="header-section-number">4.4.1</span> Argument <code>t</code> in <code>hmmTMB</code> functions</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -234,9 +304,208 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>x</p>
+<p>We fit HMMs with R package <code>hmmTMB</code>. <span class="citation" data-cites="hmmTMB">(<a href="references.html#ref-hmmTMB" role="doc-biblioref">Michelot 2025</a>)</span></p>
+<section id="data-requirements-by-hmmtmb" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="data-requirements-by-hmmtmb"><span class="header-section-number">4.1</span> Data requirements by <code>hmmTMB</code></h2>
+<ul>
+<li>Data must be in long format with one visit per row</li>
+<li>Data must be provided as a data.frame</li>
+<li>Observed variables, i.e., the ones caused by the latent state, as well as covariates are columns in this data.frame</li>
+<li>The variable containing the participant ID needs to be called <code>ID</code></li>
+<li>Known states of the (usually hidden) latent state variable, e.g., based on value patterns of observed variables for which there is very little uncertainty in latent state determination, must be provided in a variable called <code>state</code>, with integer values from <code>1</code> to the number of latent states for known states, and <code>NA</code> for hidden states that need to be estimated by the model</li>
+<li>Missing values in observed variables, i.e., the ones caused by the latent state, are allowed but must be <code>NA</code></li>
+<li>Missing values in covariates are not allowed. If there are <code>NA</code>s in covariates, <code>hmmTMB</code> will use insufficient methods to fill them in. Therefore, missings in covariates must be multiply imputed before fitting the model.</li>
+<li>Categorical predictors should be factors</li>
+<li>There is the option to include a variable that defines time. It needs to be called <code>time</code>. Currently, I am not 100% sure what the inclusion of a <code>time</code> variable actually changes.</li>
+</ul>
+</section>
+<section id="workflow-for-fitting-hmm-models" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="workflow-for-fitting-hmm-models"><span class="header-section-number">4.2</span> Workflow for fitting HMM models</h2>
+<section id="decisions" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="decisions"><span class="header-section-number">4.2.1</span> Decisions</h3>
+<p>We fit several models, which differ based on the following options:</p>
+<ul>
+<li>DECISIONx: How many latent states are assumed?</li>
+<li>DECISIONx: If more than 2 latent states are assumed, are all transitions possible, e.g., can individuals transition directly from state 1 to state 3 or do they first need to transition to state 2?</li>
+<li>DECISION1: Are known state values via variable <code>state</code> included ,i.e., is the HMM semi-supervised?</li>
+<li>DECISION2: Which observed variables, i.e., the ones caused by the latent state, are included?</li>
+<li>DECISION3: Is the same linear model used for all transition probabilities, e.g., remission and relapse probability, i.e., are the same predictors included for all transition probabilities?</li>
+<li>DECISIONx: How are initial probabilities estimated, e.g., via option <code>shared</code> or <code>stationary</code>?</li>
+<li>DECISIONx: Are some parameters fixed, e.g., at 0 if it does not appear at all in one of the states?</li>
+<li>DECISIONx</li>
+<li>DECISIONx: Impute only covariates or both covariates and observed variables, i.e., the ones caused by the latent state</li>
+</ul>
+</section>
+<section id="workflow" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="workflow"><span class="header-section-number">4.2.2</span> Workflow</h3>
+<ol type="1">
+<li>Create data based on requirements (OPTION1)</li>
+<li>Create `MarkovChain` object, which describes the hidden states and transitions
+<ol type="a">
+<li>`data`: Data created in step 1.</li>
+<li>`n_states = 2`</li>
+<li>`initial_state`: OPTION5</li>
+<li>`formula`: OPTION4</li>
+</ol></li>
+<li>Create `Observation` object, which describes the relation of signs and symptoms with the hidden states
+<ol type="a">
+<li>`data`: Data created in step 1.</li>
+<li>`n_states = 2`</li>
+<li>`dists`: “cat”, i.e., categorical distributions, for all variables</li>
+<li>`par`: Sign/symptom probabilities by state are initialized with 0.5, because they are changed later</li>
+</ol></li>
+<li>Create `HMM` object by combining `MarkovChain` and `Observation` objects
+<ol type="a">
+<li>`fixpar`: OPTION6</li>
+</ol></li>
+<li>Fit model 100 times with different starting values (implemented in <code>supfuns::run_hmm()</code>)
+<ol type="a">
+<li>Randomly draw starting values for sign/symptom probabilities by state and parameters of transition probabilities</li>
+<li>Update parameters with new values</li>
+<li>Fit the model with maximum likelihood methods</li>
+</ol></li>
+<li>Extract the negative log-likelihood from each of the 100 models and report the percentage of models with a value equal to the minimum</li>
+<li>Select the model with the smallest negative log-likelihood as the best one</li>
+<li>Posterior predictive checks</li>
+<li>Pooling
+<ol type="a">
+<li>Observation probabilities
+<ol type="i">
+<li>Pool intercepts on logit scale with: <code>mice::pool.scalar(rule = "rubin1987", n = ?, k = ?)</code></li>
+<li>Calculate CI on logit scale</li>
+<li>Tranform to probability scale</li>
+<li>Alternative: similarly to transition probabilities</li>
+</ol></li>
+<li>Transition probabilities
+<ol type="i">
+<li>Pool parameters (on logit scale) with: <code>mice::pool.scalar(rule = "rubin1987", n = ?, k = ?)</code></li>
+<li>Calculate CI on logit scale and transform to Odds Ratio scale for predictor of interest</li>
+<li>Transform the newdata used in <code>hmm$predict()</code> to a design matrix with: <code>hmm$hid()$make_mat(data = hmm$obs()$data(), new_data = newdata)$X_fe</code></li>
+<li>Matrix-multiply the design matrix with the pooled estimates and use it as argument <code>linpred</code> in <code>MarkovChain$tpm()</code>: <code>hmm$hid()$tpm(linpred = design_matrix %*% pooled_est, t = "all")</code> (Alternative: Process the result of the matrix multiplication directly.)</li>
+<li>The resulting probabilities are the MLEs (<code>geom_point()</code> / <code>geom_line()</code> in plot)</li>
+<li>Predict 1000 samples from the model in each of the 20 imputed datasets with: <code>hmm$predict("tpm", newdata = newdata, n_post = 1e3, return_post = TRUE)</code></li>
+<li>Extract the posterior samples from each of the 20 imputed datasets, throw them together, and calculate 2.5% and 97.5% quantiles</li>
+</ol></li>
+<li>State decodings
+<ol type="i">
+<li>Get Viterbi states in each of the 20 imputed datasets.</li>
+<li>Plot the proportion of being in state 2, instead of the locally decoded values in <code>geom_line()</code></li>
+</ol></li>
+</ol></li>
+<li>Visualisation
+<ol type="a">
+<li>Observation distributions</li>
+<li>Transition probabilities by predictors</li>
+<li>State sequence</li>
+<li>Number of remission/relapse events</li>
+</ol></li>
+</ol>
+</section>
+</section>
+<section id="supfuns-functions" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="supfuns-functions"><span class="header-section-number">4.3</span> <code>Supfuns</code> functions</h2>
+<p>The current <code>supfuns</code> functions still need to be generalised. Currently, they are focused on the asthma transition project, which among other things, assumes 2 latent states.</p>
+<p>HMMs are estimated with function <code>run_hmm()</code>. It can show a <code>progressr</code> progress bar, if it is activated first.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="st">"cli"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The first step is to specify the set of observed variables, i.e., the ones caused by the latent state.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>obsvars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"obs1"</span>, <span class="st">"obs2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, the model is fit with <code>run_hmm()</code>. For parallelised calculation of the 100 models with different random starting values, set a <code>multisession</code> plan with the <code>future</code> package. Stop parallelisation by setting a <code>sequential</code> plan.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(multisession, <span class="at">workers =</span> <span class="dv">5</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">run_hmm</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> d,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">obsvars =</span> obsvars,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">initial_state =</span> <span class="st">"shared"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span> age_pred <span class="sc">*</span> female <span class="sc">+</span> vab1,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrep =</span> <span class="dv">100</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(sequential)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The ouput of <code>run_hmm()</code> contains two elements: the model itself as well as its identification, i.e., the percentage of random starting values leading to the model with the best likelihood. If a considerable percentage of random starting values led to the best solution, we can be reasonably sure that the global maximum likelihood solution has been found.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract model</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>hmm <span class="ot">&lt;-</span> m<span class="sc">$</span>hmm</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Identification</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>m<span class="sc">$</span>ident</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With <code>plot_hmm_obs()</code>, we can plot the distribution of observed variables by latent state. This is important for interpretation of latent states.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_hmm_obs</span>(hmm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Effect estimates of transition predictors can be extracted with <code>or_hmm()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">or_hmm</span>(hmm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Predicted transition probabilities by a certain predictor can be plotted with <code>plot_hmm_predict()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_hmm_predict</span>(hmm, <span class="at">var =</span> <span class="st">"vab1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, the number of transitions can be extracted with <code>n_trans()</code>. It will give the number of remissions, that number of relapses, as well as the transition pattern by individual, which is the number of remission and relapse events. Again, the definition of remission and relapse currently only makes sense in the context of the asthma transition analysis.</p>
+</section>
+<section id="misc" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="misc"><span class="header-section-number">4.4</span> Misc</h2>
+<section id="argument-t-in-hmmtmb-functions" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="argument-t-in-hmmtmb-functions"><span class="header-section-number">4.4.1</span> Argument <code>t</code> in <code>hmmTMB</code> functions</h3>
+<p>The following functions have a <code>t</code> argument:</p>
+<ul>
+<li><code>MarkovChain$tpm()</code></li>
+<li><code>Observation$par()</code></li>
+</ul>
+<p>These functions are called by other functions:</p>
+<ul>
+<li><code>HMM$par()</code> calls <code>MarkovChain$tpm()</code> &amp; <code>Observation$par()</code></li>
+<li><code>HMM$predict()</code> calls <code>MarkovChain$tpm()</code> &amp; <code>Observation$par()</code></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Both lines give identical results</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">hid</span>()<span class="sc">$</span><span class="fu">tpm</span>(<span class="at">t =</span> <span class="dv">1</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">predict</span>(<span class="st">"tpm"</span>, <span class="at">t =</span> <span class="dv">1</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Both lines give identical results</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">hid</span>()<span class="sc">$</span><span class="fu">tpm</span>(<span class="at">t =</span> <span class="st">"all"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">predict</span>(<span class="st">"tpm"</span>, <span class="at">t =</span> <span class="st">"all"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Both lines give identical results</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">obs</span>()<span class="sc">$</span><span class="fu">par</span>(<span class="at">t =</span> <span class="dv">2</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">predict</span>(<span class="st">"obspar"</span>, <span class="at">t =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><code>HMM$print_obspar()</code> calls <code>HMM$par()</code></li>
+<li><code>HMM$print_tpm()</code> calls <code>HMM$par()</code></li>
+<li><code>Observation$par_alt()</code> calls <code>HMM$par()</code></li>
+</ul>
+<p>The following behaviour of <code>t</code> has been confirmed in testing:</p>
+<ul>
+<li><code>t = "all"</code> gives <code>nrow(data)</code> tpm/obspar outputs, i.e., one result per participant in the data used to fit the HMM</li>
+<li>Predicting (<code>HMM$predict()</code>) with <code>newdata</code> ignores <code>t</code> and produces one prediction for each line in <code>newdata</code></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># All three lines give identical results</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">predict</span>(<span class="st">"tpm"</span>, <span class="at">newdata =</span> newdata, <span class="at">t =</span> <span class="dv">1</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">predict</span>(<span class="st">"tpm"</span>, <span class="at">newdata =</span> newdata, <span class="at">t =</span> <span class="dv">14</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>hmm<span class="sc">$</span><span class="fu">predict</span>(<span class="st">"tpm"</span>, <span class="at">newdata =</span> newdata, <span class="at">t =</span> <span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>tpm/obspar with <code>t = x</code>, e.g., <code>t = 2</code>, refers to the predicted values for row <code>x</code>, e.g., row <code>2</code></li>
+<li>Values for <code>predict(t = "all")</code> for individuals with the same predictors are identical</li>
+</ul>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-hmmTMB" class="csl-entry" role="listitem">
+Michelot, Théo. 2025. <span>“<span></span>hmmTMB<span></span>: Hidden <span></span>m<span></span>arkov Models with Flexible Covariate Effects in <span></span>r<span></span>”</span> 114. <a href="https://doi.org/10.18637/jss.v114.i05">https://doi.org/10.18637/jss.v114.i05</a>.
+</div>
+</div>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

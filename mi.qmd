@@ -1,3 +1,11 @@
 # Multiple Imputation
 
 For multiple imputation, we use the package `mice` [@mice].
+
+## Basic MI
+
+x
+
+## MI for longitudinal data
+
+See [@wijesuriya2025]

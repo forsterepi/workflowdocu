@@ -50,6 +50,7 @@ Sometimes, the cached object needs to be created again, even though it has been 
 
 ```{r}
 #| eval: false
+
 ## Delete pointer, i.e., name
 cache$del("name")
 
@@ -72,6 +73,7 @@ You can change the name of a cached object by using method `duplicate()`. It cre
 
 ```{r}
 #| eval: false
+
 ## Duplicate the pointer
 cache$duplicate("old_name", "new_name")
 

@@ -20,7 +20,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -209,8 +263,16 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#basic-model-fitting" id="toc-basic-model-fitting" class="nav-link active" data-scroll-target="#basic-model-fitting"><span class="header-section-number">3.1</span> Basic model fitting</a></li>
+  <li><a href="#descriptives-by-latent-class" id="toc-descriptives-by-latent-class" class="nav-link" data-scroll-target="#descriptives-by-latent-class"><span class="header-section-number">3.2</span> Descriptives by latent class</a></li>
+  <li><a href="#lca-with-multiply-imputed-data" id="toc-lca-with-multiply-imputed-data" class="nav-link" data-scroll-target="#lca-with-multiply-imputed-data"><span class="header-section-number">3.3</span> LCA with multiply imputed data</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -234,9 +296,91 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>x</p>
+<p>LCA is conducted with package <code>poLCA</code>. <span class="citation" data-cites="poLCA">(<a href="references.html#ref-poLCA" role="doc-biblioref">Linzer and Lewis 2011</a>)</span></p>
+<section id="basic-model-fitting" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="basic-model-fitting"><span class="header-section-number">3.1</span> Basic model fitting</h2>
+<p>First, your indicator variables need to be combined in a formula objects using the <code>cbind()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">cbind</span>(var1, var2, var3, var4) <span class="sc">~</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You need to specify the number of latent classes when fitting the model. We usually fit multiple models that vary by the number of latent classes and compare them to select the appropriate number of latent classes. Start with 2 latent classes and increase the number until identification has finally broken down or the classes make absolutely no sense any more. A reasonable choice for the highest number of latent classes is usually between 7 and 10. Always set a seed before fitting a model. Model fitting is done with function <code>poLCA::poLCA()</code>. The following arguments are used:</p>
+<ul>
+<li><code>formula</code>: The formula object created above that contains the included indicator variables</li>
+<li><code>data</code>: The data frame</li>
+<li><code>nclass</code>: The number of latent classes</li>
+<li><code>na.rm</code>: Indicating if observations with missing values in indicator variables should be removed. Should be <code>FALSE</code>.</li>
+<li><code>nrep</code>: Number of repitions with random starting values. Used for evaluating identification. Should be <code>100</code>.</li>
+<li><code>verbose</code>: Indicating if output should be printed in the console</li>
+</ul>
+<p>Models can be printed in a nicer format with function <code>supfuns::lca_print()</code>. Package <code>flextable</code> can be used to save the table as <code>.docx</code> file. Identification can be checked with function <code>supfuns::lca_ident()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 classes</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">563456</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>lca2 <span class="ot">&lt;-</span> <span class="fu">poLCA</span>(f, df_lca, <span class="at">nclass =</span> <span class="dv">2</span>, <span class="at">na.rm =</span> F, <span class="at">nrep =</span> <span class="dv">100</span>, <span class="at">verbose =</span> F)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">lca_ident</span>(lca2)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lca_print</span>(lca2)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 classes</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">873265</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>lca3 <span class="ot">&lt;-</span> <span class="fu">poLCA</span>(f, df_lca, <span class="at">nclass =</span> <span class="dv">3</span>, <span class="at">na.rm =</span> F, <span class="at">nrep =</span> <span class="dv">100</span>, <span class="at">verbose =</span> F)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">lca_ident</span>(lca3)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">lca_print</span>(lca3) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save_as_docx</span>(<span class="at">path =</span> <span class="st">"Output/lca3.docx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Information and diagnostics for all models can be compared with function <code>supfuns::lca_table()</code>. This table can be saved with <code>flextable</code> as well.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lca_table</span>(<span class="fu">list</span>(lca2, lca3, lca4, lca5, lca6, lca7)) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save_as_docx</span>(<span class="at">path =</span> <span class="st">"Output/lca_diagnostics.docx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>From the list of model candidates, a model is selected based on identification, statistical criteria, interpretability, and parsimony. The ordering of classes should make sense, e.g., when modelling symptom trajectories, the first latent class should describe trajectories with the least symptoms, while the number increases from class to class. Since the ordering of latent classes is random, the order is likely not optimal. Latent classes can be reordered with function <code>poLCA::poLCA.reorder()</code>. The following code shows the necessary steps:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select model</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>lca <span class="ot">&lt;-</span> lca5</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Reorder starting probabilities</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>probs.start.new <span class="ot">&lt;-</span> <span class="fu">poLCA.reorder</span>(lca<span class="sc">$</span>probs.start, <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Refit with reordered start values</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>lca_reordered <span class="ot">&lt;-</span> <span class="fu">poLCA</span>(f, df_lca, <span class="at">nclass =</span> <span class="dv">5</span>, <span class="at">na.rm =</span> F, <span class="at">probs.start =</span> probs.start.new, <span class="at">verbose =</span> F)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Update model</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>lca <span class="ot">&lt;-</span> lca_reordered</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">lca_print</span>(lca) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save_as_docx</span>(<span class="at">path =</span> <span class="st">"Output/final_model.docx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>First, one of the candidate models is selected (here, the five class solution <code>lca5</code>).</li>
+<li>Second, <code>poLCA.reorder()</code> is used to reorder the starting values that led to the selected model. Using reordered starting values will lead to the same model with reordered latent classes. The starting values of the selected model are passed to its first argument. A numeric vector containing numbers from 1 to the number of latent classes, indicating the intended order of latent classes is passed to its second argument. In the example, <code>c(5, 4, 1, 2, 3)</code> is used which indicated that:
+<ul>
+<li>The fifth latent class from the selected model should be the first latent class in the reordered model.</li>
+<li>The fourth latent class from the selected model should be the second latent class in the reordered model.</li>
+<li>etc.</li>
+</ul></li>
+<li>Third, the model is re-fit with the new starting values. The output of <code>poLCA.reorder()</code> is passed to the <code>probs.start</code> argument of <code>poLCA()</code>. Also, <code>nrep</code> is not specified anymore, because we don’t want to use random starting values.</li>
+<li>Fourth, the re-fit model is used as the final model.</li>
+</ul>
+</section>
+<section id="descriptives-by-latent-class" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="descriptives-by-latent-class"><span class="header-section-number">3.2</span> Descriptives by latent class</h2>
+<p>Functions for creating descriptive statstics by latent class still need to be finalised in package <code>supfuns</code></p>
+</section>
+<section id="lca-with-multiply-imputed-data" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="lca-with-multiply-imputed-data"><span class="header-section-number">3.3</span> LCA with multiply imputed data</h2>
+<p>Functions for fitting LCA models with multiply imputed data still need to be finalised in package <code>supfuns</code></p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-poLCA" class="csl-entry" role="listitem">
+Linzer, Drew A., and Jeffrey B. Lewis. 2011. <span>“<span></span>poLCA<span></span>: An <span></span>r<span></span> Package for Polytomous Variable Latent Class Analysis”</span> 42. <a href="https://www.jstatsoft.org/v42/i10/">https://www.jstatsoft.org/v42/i10/</a>.
+</div>
+</div>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

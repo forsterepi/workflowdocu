@@ -1,3 +1,90 @@
 # Latent Class Analysis
 
-x
+LCA is conducted with package `poLCA`. [@poLCA]
+
+## Basic model fitting
+
+First, your indicator variables need to be combined in a formula objects using the `cbind()` function.
+
+```{r}
+#| eval: false
+f <- cbind(var1, var2, var3, var4) ~ 1
+```
+
+You need to specify the number of latent classes when fitting the model. We usually fit multiple models that vary by the number of latent classes and compare them to select the appropriate number of latent classes. Start with 2 latent classes and increase the number until identification has finally broken down or the classes make absolutely no sense any more. A reasonable choice for the highest number of latent classes is usually between 7 and 10. Always set a seed before fitting a model. Model fitting is done with function `poLCA::poLCA()`. The following arguments are used:
+
+-   `formula`: The formula object created above that contains the included indicator variables
+-   `data`: The data frame
+-   `nclass`: The number of latent classes
+-   `na.rm`: Indicating if observations with missing values in indicator variables should be removed. Should be `FALSE`.
+-   `nrep`: Number of repitions with random starting values. Used for evaluating identification. Should be `100`.
+-   `verbose`: Indicating if output should be printed in the console
+
+Models can be printed in a nicer format with function `supfuns::lca_print()`. Package `flextable` can be used to save the table as `.docx` file. Identification can be checked with function `supfuns::lca_ident()`.
+
+```{r}
+#| eval: false
+
+# 2 classes
+set.seed(563456)
+lca2 <- poLCA(f, df_lca, nclass = 2, na.rm = F, nrep = 100, verbose = F)
+
+lca_ident(lca2)
+lca_print(lca2)
+
+# 3 classes
+set.seed(873265)
+lca3 <- poLCA(f, df_lca, nclass = 3, na.rm = F, nrep = 100, verbose = F)
+
+lca_ident(lca3)
+lca_print(lca3) %>% 
+  flextable() %>% 
+  save_as_docx(path = "Output/lca3.docx")
+```
+
+Information and diagnostics for all models can be compared with function `supfuns::lca_table()`. This table can be saved with `flextable` as well.
+
+```{r}
+#| eval: false
+lca_table(list(lca2, lca3, lca4, lca5, lca6, lca7)) %>% 
+  flextable() %>% 
+  save_as_docx(path = "Output/lca_diagnostics.docx")
+```
+
+From the list of model candidates, a model is selected based on identification, statistical criteria, interpretability, and parsimony. The ordering of classes should make sense, e.g., when modelling symptom trajectories, the first latent class should describe trajectories with the least symptoms, while the number increases from class to class. Since the ordering of latent classes is random, the order is likely not optimal. Latent classes can be reordered with function `poLCA::poLCA.reorder()`. The following code shows the necessary steps:
+
+```{r}
+#| eval: false
+
+# Select model
+lca <- lca5
+
+# Reorder starting probabilities
+probs.start.new <- poLCA.reorder(lca$probs.start, c(5,4,1,2,3))
+
+# Refit with reordered start values
+lca_reordered <- poLCA(f, df_lca, nclass = 5, na.rm = F, probs.start = probs.start.new, verbose = F)
+
+## Update model
+lca <- lca_reordered
+
+lca_print(lca) %>% 
+  flextable() %>% 
+  save_as_docx(path = "Output/final_model.docx")
+```
+
+-   First, one of the candidate models is selected (here, the five class solution `lca5`).
+-   Second, `poLCA.reorder()` is used to reorder the starting values that led to the selected model. Using reordered starting values will lead to the same model with reordered latent classes. The starting values of the selected model are passed to its first argument. A numeric vector containing numbers from 1 to the number of latent classes, indicating the intended order of latent classes is passed to its second argument. In the example, `c(5, 4, 1, 2, 3)` is used which indicated that:
+    -   The fifth latent class from the selected model should be the first latent class in the reordered model.
+    -   The fourth latent class from the selected model should be the second latent class in the reordered model.
+    -   etc.
+-   Third, the model is re-fit with the new starting values. The output of `poLCA.reorder()` is passed to the `probs.start` argument of `poLCA()`. Also, `nrep` is not specified anymore, because we don't want to use random starting values.
+-   Fourth, the re-fit model is used as the final model.
+
+## Descriptives by latent class
+
+Functions for creating descriptive statstics by latent class still need to be finalised in package `supfuns`
+
+## LCA with multiply imputed data
+
+Functions for fitting LCA models with multiply imputed data still need to be finalised in package `supfuns`
