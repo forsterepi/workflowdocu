@@ -5,23 +5,13 @@
 See [Quarto Guide: Authoring front matter](https://quarto.org/docs/authoring/front-matter.html) for how to add author, affiliation, orcid, etc.
 
 - Activate table of contents with:
+  - `toc: true`
+  - `toc-title: Contents`
+- Use today's date when rendering with: `date: today`
 
----
-toc: true
-toc-title: Contents
----
+<!-- -->
 
-- Use today's date when rendering with:
-
----
-date: today
----
-
-- Chapters are numbered with:
-
----
-number-sections: true
----
+- Chapters are numbered with: `number-sections: true`
 
 If you don't want to use numbering for some sections, e.g., for the *Reference* section, click on the three dots that appear on the right side of the visual editor when hovering over the corresponding header. In the attributes window that opens, add `.unnumbered` to *Classes*.
 
