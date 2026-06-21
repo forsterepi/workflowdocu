@@ -221,7 +221,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Contents</h2>
+    <h2 id="toc-title">Table of contents</h2>
    
   <ul>
   <li><a href="#yaml-header" id="toc-yaml-header" class="nav-link active" data-scroll-target="#yaml-header"><span class="header-section-number">8.1</span> YAML header</a></li>
@@ -250,12 +250,6 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">today</p>
-    </div>
-  </div>
   
     
   </div>
@@ -269,13 +263,16 @@ ul.task-list li input[type="checkbox"] {
 <h2 data-number="8.1" class="anchored" data-anchor-id="yaml-header"><span class="header-section-number">8.1</span> YAML header</h2>
 <p>See <a href="https://quarto.org/docs/authoring/front-matter.html">Quarto Guide: Authoring front matter</a> for how to add author, affiliation, orcid, etc.</p>
 <ul>
-<li>Activate table of contents with:</li>
-</ul>
+<li>Activate table of contents with:
 <ul>
-<li>Use today’s date when rendering with:</li>
+<li><code>toc: true</code></li>
+<li><code>toc-title: Contents</code></li>
+</ul></li>
+<li>Use today’s date when rendering with: <code>date: today</code></li>
 </ul>
+<!-- -->
 <ul>
-<li>Chapters are numbered with:</li>
+<li>Chapters are numbered with: <code>number-sections: true</code></li>
 </ul>
 <p>If you don’t want to use numbering for some sections, e.g., for the <em>Reference</em> section, click on the three dots that appear on the right side of the visual editor when hovering over the corresponding header. In the attributes window that opens, add <code>.unnumbered</code> to <em>Classes</em>.</p>
 </section>

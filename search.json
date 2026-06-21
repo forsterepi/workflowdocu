@@ -333,7 +333,7 @@
     "href": "quarto.html#yaml-header",
     "title": "8  Quarto",
     "section": "",
-    "text": "Activate table of contents with:\n\n\nUse today’s date when rendering with:\n\n\nChapters are numbered with:",
+    "text": "Activate table of contents with:\n\ntoc: true\ntoc-title: Contents\n\nUse today’s date when rendering with: date: today\n\n\n\nChapters are numbered with: number-sections: true",
     "crumbs": [
       "Other",
       "<span class='chapter-number'>8</span>  <span class='chapter-title'>Quarto</span>"
