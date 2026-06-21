@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Multiple Imputation – Workflow Documentation</title>
+<title>8&nbsp; Quarto – Workflow Documentation</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,26 +23,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -52,8 +33,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./lca.html" rel="next">
-<link href="./sim.html" rel="prev">
+<link href="./references.html" rel="next">
+<link href="./ggplot-miscellaneous.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -104,7 +85,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mi.html">Data</a></li><li class="breadcrumb-item"><a href="./mi.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Multiple Imputation</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cache.html">Other</a></li><li class="breadcrumb-item"><a href="./quarto.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quarto</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -163,7 +144,7 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mi.html" class="sidebar-item-text sidebar-link active">
+  <a href="./mi.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Multiple Imputation</span></span></a>
   </div>
 </li>
@@ -221,7 +202,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./quarto.html" class="sidebar-item-text sidebar-link">
+  <a href="./quarto.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quarto</span></span></a>
   </div>
 </li>
@@ -240,20 +221,28 @@ div.csl-indent {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#basic-mi" id="toc-basic-mi" class="nav-link active" data-scroll-target="#basic-mi"><span class="header-section-number">2.1</span> Basic MI</a></li>
-  <li><a href="#mi-for-longitudinal-data" id="toc-mi-for-longitudinal-data" class="nav-link" data-scroll-target="#mi-for-longitudinal-data"><span class="header-section-number">2.2</span> MI for longitudinal data</a></li>
+  <li><a href="#yaml-header" id="toc-yaml-header" class="nav-link active" data-scroll-target="#yaml-header"><span class="header-section-number">8.1</span> YAML header</a></li>
+  <li><a href="#code-blocks" id="toc-code-blocks" class="nav-link" data-scroll-target="#code-blocks"><span class="header-section-number">8.2</span> Code blocks</a>
+  <ul class="collapse">
+  <li><a href="#stan-code-blocks" id="toc-stan-code-blocks" class="nav-link" data-scroll-target="#stan-code-blocks"><span class="header-section-number">8.2.1</span> Stan code blocks</a></li>
+  <li><a href="#sec-figures" id="toc-sec-figures" class="nav-link" data-scroll-target="#sec-figures"><span class="header-section-number">8.2.2</span> Figures</a></li>
+  <li><a href="#dotgraphviz" id="toc-dotgraphviz" class="nav-link" data-scroll-target="#dotgraphviz"><span class="header-section-number">8.2.3</span> dot/Graphviz</a></li>
+  </ul></li>
+  <li><a href="#inline-code" id="toc-inline-code" class="nav-link" data-scroll-target="#inline-code"><span class="header-section-number">8.3</span> Inline code</a></li>
+  <li><a href="#cross-referencing" id="toc-cross-referencing" class="nav-link" data-scroll-target="#cross-referencing"><span class="header-section-number">8.4</span> Cross-referencing</a></li>
+  <li><a href="#rendering" id="toc-rendering" class="nav-link" data-scroll-target="#rendering"><span class="header-section-number">8.5</span> Rendering</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mi.html">Data</a></li><li class="breadcrumb-item"><a href="./mi.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Multiple Imputation</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cache.html">Other</a></li><li class="breadcrumb-item"><a href="./quarto.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quarto</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Multiple Imputation</span></h1>
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quarto</span></h1>
 </div>
 
 
@@ -261,6 +250,12 @@ div.csl-indent {
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">today</p>
+    </div>
+  </div>
   
     
   </div>
@@ -270,24 +265,87 @@ div.csl-indent {
 </header>
 
 
-<p>For multiple imputation, we use the package <code>mice</code> <span class="citation" data-cites="mice">(<a href="references.html#ref-mice" role="doc-biblioref">Buuren and Groothuis-Oudshoorn 2011</a>)</span>.</p>
-<section id="basic-mi" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="basic-mi"><span class="header-section-number">2.1</span> Basic MI</h2>
-<p>x</p>
+<section id="yaml-header" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="yaml-header"><span class="header-section-number">8.1</span> YAML header</h2>
+<p>See <a href="https://quarto.org/docs/authoring/front-matter.html">Quarto Guide: Authoring front matter</a> for how to add author, affiliation, orcid, etc.</p>
+<ul>
+<li>Activate table of contents with:</li>
+</ul>
+<ul>
+<li>Use today’s date when rendering with:</li>
+</ul>
+<ul>
+<li>Chapters are numbered with:</li>
+</ul>
+<p>If you don’t want to use numbering for some sections, e.g., for the <em>Reference</em> section, click on the three dots that appear on the right side of the visual editor when hovering over the corresponding header. In the attributes window that opens, add <code>.unnumbered</code> to <em>Classes</em>.</p>
 </section>
-<section id="mi-for-longitudinal-data" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="mi-for-longitudinal-data"><span class="header-section-number">2.2</span> MI for longitudinal data</h2>
-<p>See <span class="citation" data-cites="wijesuriya2025">(<a href="references.html#ref-wijesuriya2025" role="doc-biblioref">Wijesuriya et al. 2025</a>)</span></p>
+<section id="code-blocks" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="code-blocks"><span class="header-section-number">8.2</span> Code blocks</h2>
+<ul>
+<li>Code block options start with <code>#|</code></li>
+<li>Use <code>code-fold: true</code> for folding the code</li>
+<li>Use <code>code-summary: xxx</code> to add the description of the code block that is shown when the code is folded</li>
+<li>Use <code>message: false</code>, <code>warning: false</code>, or <code>error: false</code> to prevent the printing of messages, warnings, and errors</li>
+<li>Use <code>file: R/some-script.R</code> to run a script instead of providing the code in quarto</li>
+<li>Use <code>echo: false</code> to run code but prevent its inclusion in the document</li>
+<li>Use <code>eval: false</code> to show the code without running it</li>
+</ul>
+<section id="stan-code-blocks" class="level3" data-number="8.2.1">
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="stan-code-blocks"><span class="header-section-number">8.2.1</span> Stan code blocks</h3>
+<p>To print a Stan model from a <code>.stan</code> file:</p>
+<ul>
+<li>Create a R code block</li>
+<li>Add option <code>#| class-output: stan</code> to format the output like Stan code</li>
+<li>Add option <code>#| echo: false</code> to prevent showing the code in this code block</li>
+<li>Add the code <code>cat(readLines("R/model.stan"), sep = "\n")</code> to print the code</li>
+</ul>
+</section>
+<section id="sec-figures" class="level3" data-number="8.2.2">
+<h3 data-number="8.2.2" class="anchored" data-anchor-id="sec-figures"><span class="header-section-number">8.2.2</span> Figures</h3>
+<p>See <a href="https://quarto.org/docs/authoring/figures.html">Quarto Guide: Figures</a></p>
+<p>When the result of a code block is to print a figure:</p>
+<ul>
+<li>Add option <code>#| label</code> and provide an ID for the figure. The ID has to start with <code>fig-</code>, e.g., <code>fig-intro-1</code>.</li>
+<li>Add option <code>#| fig-cap</code> to provide the figure caption</li>
+<li>Other options like <code>fig-height</code> are also available</li>
+</ul>
+</section>
+<section id="dotgraphviz" class="level3" data-number="8.2.3">
+<h3 data-number="8.2.3" class="anchored" data-anchor-id="dotgraphviz"><span class="header-section-number">8.2.3</span> dot/Graphviz</h3>
+<p>When including a <a href="https://graphviz.org/">GraphViz</a> plot:</p>
+<ul>
+<li>Add a GraphViz or dot code block</li>
+<li>Options need to start with <code>//|</code> instead of <code>#|</code></li>
+<li>Use the options described above in subsection figures (see <a href="#sec-figures" class="quarto-xref"><span>Section 8.2.2</span></a>)</li>
+<li>For the graph code:
+<ul>
+<li>Start with <code>digraph name {}</code></li>
+<li>Add option <code>rankdir = LR</code></li>
+<li>Add option <code>bgcolor = "transparent"</code></li>
+<li>For node labels, see <code>[label = &lt;p&lt;SUB&gt;1&lt;/SUB&gt;&gt;, shape = diamond]</code></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="inline-code" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="inline-code"><span class="header-section-number">8.3</span> Inline code</h2>
+<p>Use inline code formatting with Ctrl+D and start with a single <em>r</em> and a space before the code. Ideally, the code is only a variable that is printed.</p>
+</section>
+<section id="cross-referencing" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="cross-referencing"><span class="header-section-number">8.4</span> Cross-referencing</h2>
+<p>See <a href="https://quarto.org/docs/authoring/cross-references.html">Quarto Guide: Cross-referencing</a></p>
+<ul>
+<li>Figures: When adding a label to figures as described above, they are available for cross-referencing</li>
+<li>Sections: Click on the three dots that appear on the right side of the visual editor when hovering over the corresponding header. Add a section name in field ID to reference it. The name has to start with <code>#sec-</code>, e.g., <code>#sec-name</code>.</li>
+<li>Tables: Add a table name behind the table caption in curly brackets. The table name needs to start with <code>#tbl-</code>, e.g., <code>#tbl-name</code>. Example: <code>My Caption {#tbl-letters}</code> <strong>Note: Currently bugged. {#tbl-xx} currently vanishes when document is rendered.</strong></li>
+</ul>
+</section>
+<section id="rendering" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="rendering"><span class="header-section-number">8.5</span> Rendering</h2>
+<p>Open a Terminal (next to the Console or via Menu item <em>Code</em>). Make sure you are in the folder where your quarto document is located. Type <code>quarto render docname.qmd --to html</code>.</p>
+<p>When rendering to html, don’t forget that the <code>docname_files</code> folder needs to be copied as well if you want to copy the html.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
-<div id="ref-mice" class="csl-entry" role="listitem">
-Buuren, Stef van, and Karin Groothuis-Oudshoorn. 2011. <em><span></span>Mice<span></span>: Multivariate Imputation by Chained Equations in r</em>. 45: 1–67. <a href="https://doi.org/10.18637/jss.v045.i03">https://doi.org/10.18637/jss.v045.i03</a>.
-</div>
-<div id="ref-wijesuriya2025" class="csl-entry" role="listitem">
-Wijesuriya, Rushani, Margarita Moreno-Betancur, John B. Carlin, Ian R. White, Matteo Quartagno, and Katherine J. Lee. 2025. <span>“Multiple Imputation for Longitudinal Data: A Tutorial.”</span> <em>Statistics in Medicine</em> 44 (3-4). <a href="https://doi.org/10.1002/sim.10274">https://doi.org/10.1002/sim.10274</a>.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -693,13 +751,13 @@ Wijesuriya, Rushani, Margarita Moreno-Betancur, John B. Carlin, Ian R. White, Ma
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./sim.html" class="pagination-link" aria-label="Simulation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simulation</span></span>
+      <a href="./ggplot-miscellaneous.html" class="pagination-link" aria-label="ggplot: Miscellaneous">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">ggplot: Miscellaneous</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lca.html" class="pagination-link" aria-label="Latent Class Analysis">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Latent Class Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
