@@ -14,36 +14,26 @@ In the following formulas, $\mathbf{Y}$ is the true binary outcome with $\mathbf
 
 Measurement error is parameterised by sensitivity ($\pi_1$) and specificity ($\pi_0$), which are defined as follows:
 
-$$
-\begin{align}
+$$\begin{align}
 \pi_1 &= pr(\mathbf{S}=1\,|\,\mathbf{Y}=1,\,\mathbf{Z})\\
 \pi_0 &= pr(\mathbf{S}=0\,|\,\mathbf{Y}=0,\,\mathbf{Z})
-\end{align}
-$$
+\end{align}$$
 
 If we had the true binary outcome, we would use a logistic model for analysis, described as follow:
 
-$$
-pr(\mathbf{Y}=1\,|\,\mathbf{Z})=H(\beta_0+\beta_z^t\,\mathbf{Z})
-$$
+$$pr(\mathbf{Y}=1\,|\,\mathbf{Z})=H(\beta_0+\beta_z^t\,\mathbf{Z})$$
 
 However, when using $\mathbf{S}$ instead of $\mathbf{Y}$, the probability model needs to be adjusted as follows:
 
-$$
-pr(\mathbf{S}=1\,|\,\mathbf{Z})=(1-\pi_0)+(\pi_1+\pi_0-1)\,H(\beta_0+\beta_z^t\,\mathbf{Z})
-$$
+$$pr(\mathbf{S}=1\,|\,\mathbf{Z})=(1-\pi_0)+(\pi_1+\pi_0-1)\,H(\beta_0+\beta_z^t\,\mathbf{Z})$$
 
 The authors describe the loglikelihood function to be maximised as:
 
-$$
-\sum_{i=1}^n[\mathbf{S}_i\,log\{ \Psi(\mathbf{S}, \mathbf{Z}, \pi_0, \pi_1, \beta_0, \beta_z)\}+(1-\mathbf{S}_i)\,log\{1-\Psi(\mathbf{S},\mathbf{Z},\pi_0,\pi_1,\beta_0,\beta_z)\}]
-$$
+$$\sum_{i=1}^n[\mathbf{S}_i\,log\{ \Psi(\mathbf{S}, \mathbf{Z}, \pi_0, \pi_1, \beta_0, \beta_z)\}+(1-\mathbf{S}_i)\,log\{1-\Psi(\mathbf{S},\mathbf{Z},\pi_0,\pi_1,\beta_0,\beta_z)\}]$$
 
 with $\Psi(\mathbf{S},\mathbf{Z},\pi_0,\pi_1,\beta_0,\beta_z)$ equal to $pr(\mathbf{S}=1\,|\,\mathbf{Z})$. Let's therefore simplify to:
 
-$$
-\sum_{i=1}^n[\mathbf{S}_i\,log\{pr(\mathbf{S}=1\,|\,\mathbf{Z})\}+(1-\mathbf{S}_i)\,log\{1-pr(\mathbf{S}=1\,|\,\mathbf{Z})\}]
-$$
+$$\sum_{i=1}^n[\mathbf{S}_i\,log\{pr(\mathbf{S}=1\,|\,\mathbf{Z})\}+(1-\mathbf{S}_i)\,log\{1-pr(\mathbf{S}=1\,|\,\mathbf{Z})\}]$$
 
 ### Maximum likelihood
 
@@ -116,7 +106,7 @@ This module describes the simplest test of adjusting for outcome misclassificati
 | Known sensitivity and specificity         | \<\<evaluate\>\> |
 | No predictors of true outcome probability | \<\<evaluate\>\> |
 
-: Assumptions of simulation module "Outcome misclassification without predictor" {#tbl-me-sim-module1-asmp}
+: Assumptions of simulation module "Outcome misclassification without predictor"
 
 #### Variables
 
@@ -125,30 +115,28 @@ This module describes the simplest test of adjusting for outcome misclassificati
 | $Y_{True}$ | The true values of outcome variable Y     |
 | $Y_{Obs}$  | The observed values of outcome variable Y |
 
-: Variables of simulation module "Outcome misclassification without predictor" {#tbl-me-sim-module1-var}
+: Variables of simulation module "Outcome misclassification without predictor"
 
 #### Parameters
 
 | Parameter | Description |
-|-------------------|-----------------------------------------------------|
+|----|----|
 | $p_{True}$ | Probability of having the true outcome $Y_{True}$ |
 | $SE$ | Probability of observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is present (Sensitivity) |
 | $SP$ | Probability of not observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is absent (Specificity) |
 
-: Parameters of simulation module "Outcome misclassification without predictor" {#tbl-me-sim-module1-par}
+: Parameters of simulation module "Outcome misclassification without predictor"
 
 #### Technical details
 
-$$
-\begin{align}
+$$\begin{align}
 Y_{True} &\sim Bernoulli(p_{True}) \\
 Y_{Obs} &\sim
 \begin{cases}
 Bernoulli(SE), &\quad\text{for}\ Y_{True} = 1 \\
 Bernoulli(1 - SP), &\quad\text{for}\ Y_{True} = 0
 \end{cases}
-\end{align}
-$$
+\end{align}$$
 
 ```{dot}
 //| label: fig-graph-me-sim-module1
@@ -188,34 +176,34 @@ This module introduces a single binary predictor of the binary misclassified out
 #### Assumptions
 
 | Assumption | Justification |
-|----------------------------------------------|--------------------------|
+|----|----|
 | The probability of the outcome is influenced by a single binary predictor. | \<\<evaluate\>\> |
 | Non-differential misclassification | \<\<evaluate\>\> |
 
-: Assumptions of simulation module "Outcome misclassification with predictor" {#tbl-me-sim-module1-asmp}
+: Assumptions of simulation module "Outcome misclassification with predictor"
 
 #### Variables
 
 | Variable   | Description                                                  |
-|------------------|------------------------------------------------------|
+|------------|--------------------------------------------------------------|
 | $X$        | A binary predictor variable                                  |
 | $p_{True}$ | Individual probability of having the true outcome $Y_{True}$ |
 | $Y_{True}$ | The true values of outcome variable Y                        |
 | $Y_{Obs}$  | The observed values of outcome variable Y                    |
 
-: Variables of simulation module "Outcome misclassification with predictor" {#tbl-me-sim-module1-var}
+: Variables of simulation module "Outcome misclassification with predictor"
 
 #### Parameters
 
 | Parameter | Description |
-|------------------|------------------------------------------------------|
+|----|----|
 | $p_X$ | Probability of having the binary predictor variable |
 | $p(\alpha)$ | Probability of having the true outcome $Y_{True}$ for individuals without the predictor |
 | $OR_X$ | Ratio of odds of the true outcome $Y_{True}$ for individuals with the predictor compared to individuals without the predictor |
 | $SE$ | Probability of observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is present (Sensitivity) |
 | $SP$ | Probability of not observing the outcome $Y_{Obs}$ given the true outcome $Y_{True}$ is absent (Specificity) |
 
-: Parameters of simulation module "Outcome misclassification with predictor" {#tbl-me-sim-module1-par}
+: Parameters of simulation module "Outcome misclassification with predictor"
 
 #### Technical details
 
@@ -229,8 +217,7 @@ Y_{Obs} &\sim
 Bernoulli(SE), &\quad\text{for}\ Y_{True} = 1 \\
 Bernoulli(1 - SP), &\quad\text{for}\ Y_{True} = 0
 \end{cases}
-\end{align} 
-$$
+\end{align} $$
 
 ```{dot}
 //| label: fig-graph-me-sim-module2

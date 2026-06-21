@@ -1,0 +1,86 @@
+# Quarto
+
+## YAML header
+
+See [Quarto Guide: Authoring front matter](https://quarto.org/docs/authoring/front-matter.html) for how to add author, affiliation, orcid, etc.
+
+- Activate table of contents with:
+
+---
+toc: true
+toc-title: Contents
+---
+
+- Use today's date when rendering with:
+
+---
+date: today
+---
+
+- Chapters are numbered with:
+
+---
+number-sections: true
+---
+
+If you don't want to use numbering for some sections, e.g., for the *Reference* section, click on the three dots that appear on the right side of the visual editor when hovering over the corresponding header. In the attributes window that opens, add `.unnumbered` to *Classes*.
+
+## Code blocks
+
+- Code block options start with `#|`
+- Use `code-fold: true` for folding the code
+- Use `code-summary: xxx` to add the description of the code block that is shown when the code is folded
+- Use `message: false`, `warning: false`, or `error: false` to prevent the printing of messages, warnings, and errors
+- Use `file: R/some-script.R` to run a script instead of providing the code in quarto
+- Use `echo: false` to run code but prevent its inclusion in the document
+- Use `eval: false` to show the code without running it
+
+### Stan code blocks
+
+To print a Stan model from a `.stan` file:
+
+- Create a R code block
+- Add option `#| class-output: stan` to format the output like Stan code
+- Add option `#| echo: false` to prevent showing the code in this code block
+- Add the code `cat(readLines("R/model.stan"), sep = "\n")` to print the code
+
+### Figures {#sec-figures}
+
+See [Quarto Guide: Figures](https://quarto.org/docs/authoring/figures.html)
+
+When the result of a code block is to print a figure:
+
+- Add option `#| label` and provide an ID for the figure. The ID has to start with `fig-`, e.g., `fig-intro-1`.
+- Add option `#| fig-cap` to provide the figure caption
+- Other options like `fig-height` are also available
+
+### dot/Graphviz
+
+When including a [GraphViz](https://graphviz.org/) plot:
+
+- Add a GraphViz or dot code block
+- Options need to start with `//|` instead of `#|`
+- Use the options described above in subsection figures (see @sec-figures)
+- For the graph code:
+  - Start with `digraph name {}`
+  - Add option `rankdir = LR`
+  - Add option `bgcolor = "transparent"`
+  - For node labels, see `[label = <p<SUB>1</SUB>>, shape = diamond]`
+
+## Inline code
+
+Use inline code formatting with Ctrl+D and start with a single *r* and a space before the code. Ideally, the code is only a variable that is printed.
+
+## Cross-referencing
+
+See [Quarto Guide: Cross-referencing](https://quarto.org/docs/authoring/cross-references.html)
+
+- Figures: When adding a label to figures as described above, they are available for cross-referencing
+- Sections: Click on the three dots that appear on the right side of the visual editor when hovering over the corresponding header. Add a section name in field ID to reference it. The name has to start with `#sec-`, e.g., `#sec-name`.
+- Tables: Add a table name behind the table caption in curly brackets. The table name needs to start with `#tbl-`, e.g., `#tbl-name`. Example: `My Caption {#tbl-letters}` **Note: Currently bugged. {#tbl-xx} currently vanishes when document is rendered.**
+
+## Rendering
+
+Open a Terminal (next to the Console or via Menu item *Code*). Make sure you are in the folder where your quarto document is located. Type `quarto render docname.qmd --to html`.
+
+When rendering to html, don't forget that the `docname_files` folder needs to be copied as well if you want to copy the html.

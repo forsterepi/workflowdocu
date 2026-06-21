@@ -22,6 +22,7 @@ book:
       chapters: 
         - cache.qmd
         - ggplot-miscellaneous.qmd
+        - quarto.qmd
     - references.qmd
 
 bibliography: references.bib
